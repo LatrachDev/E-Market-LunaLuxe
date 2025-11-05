@@ -1,8 +1,30 @@
 import { Link } from "react-router-dom";
 import LoginImage from "../../assets/Images/login-image.png";
 import LoginHeader from "../../components/Layouts/LoginHeader"
+import { useEffect } from "react";
 
 export default function Login() {
+
+  // this use effect for hide the overflow for the login page!
+  useEffect(() => {
+    // add styles when component mounts
+    document.body.style.margin = '0';
+    document.body.style.padding = '0';
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.margin = '0';
+    document.documentElement.style.padding = '0';
+    document.documentElement.style.overflow = 'hidden';
+
+    // cleanup function to remove styles when component unmounts
+    return () => {
+      document.body.style.margin = '';
+      document.body.style.padding = '';
+      document.body.style.overflow = '';
+      document.documentElement.style.margin = '';
+      document.documentElement.style.padding = '';
+      document.documentElement.style.overflow = '';
+    };
+  }, []);
 
   return (
     <>
