@@ -11,13 +11,13 @@ export default function IndexPage()
 {
     return (
         <>
-            <NavBar />
+   
             <Header />
             <HomeProducts />
             <Discover />
             <History />
             <Routine />
-            <Footer />
+
         </>
     )
 }
