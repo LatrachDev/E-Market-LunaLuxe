@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import AdminSidebar from '../../components/Admin/Layouts/AdminSidebar';
+import UserManagement from '../../components/Admin/UserManagement';
 
 const navLinks = [
   { id: 'overview', label: 'Dashboard Overview', icon: '🏠' },
@@ -81,16 +82,7 @@ function AdminDashboard() {
         );
 
       case 'users':
-        return (
-          <div className="rounded-3xl border border-brandRed/10 bg-white p-8 shadow-sm">
-            <h2 className="text-2xl font-semibold font-playfair text-gray-900 mb-4">
-              User Management
-            </h2>
-            <p className="text-sm font-montserrat text-gray-600">
-              User management content will be displayed here.
-            </p>
-          </div>
-        );
+        <UserManagement />
 
       case 'overview':
       default:
