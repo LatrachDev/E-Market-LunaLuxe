@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Search, ShoppingCart, User } from "lucide-react";
+import { Package, ShoppingCart, User } from "lucide-react";
 
 function ClientNavBar() {
   return (
@@ -13,13 +13,15 @@ function ClientNavBar() {
 
       {/* Icons Container */}
       <div className="flex items-center gap-4">
-        {/* Search Icon */}
-        <button
-          className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-300"
-          aria-label="Search"
+        {/* Products Icon */}
+        <Link
+          to="/client"
+          className="p-2 rounded-full flex hover:bg-gray-100 transition-colors duration-300"
+          aria-label="Products"
         >
-          <Search size={24} className="w-5 h-5 text-gray-800 hover:text-brandBrown transition-colors" />
-        </button>
+          <Package size={24} className="w-5 h-5 text-gray-800 hover:text-brandBrown transition-colors" />
+          <p className="text-sm font-montserrat ml-2">Products</p>
+        </Link>
 
         {/* Cart Icon */}
         <Link
