@@ -1,6 +1,5 @@
 import { Routes, Route } from "react-router-dom";
 import IndexPage from "../pages/Index/IndexPage";
-import ProductsPage from "../pages/Products/ProductsPage";
 import ProductDetails from "../pages/Products/ProductDetails";
 import NotFound from "../pages/Error/NotFound";
 import LoginPage from '../pages/Auth/LoginPage';
@@ -19,7 +18,6 @@ export default function RoutesList() {
         <Routes>
 
             <Route path="/" element={<Layout><IndexPage /></Layout>} />
-            <Route path="/products" element={<ProductsPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/products/:id" element={<ProductDetails />} />
