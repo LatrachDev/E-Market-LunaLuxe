@@ -5,7 +5,7 @@ function ClientNavBar() {
   return (
     <header className="fixed top-0 left-0 w-full flex items-center justify-between px-6 sm:px-12 py-4 bg-white shadow-sm z-50">
       {/* Logo */}
-      <Link to="/">
+      <Link to="/client">
         <h3 className="font-bold text-xl sm:text-2xl tracking-widest uppercase font-playfair text-brandRed">
           LunaLuxe
         </h3>
@@ -36,7 +36,7 @@ function ClientNavBar() {
 
         {/* Profile Icon */}
         <Link
-          to="/profile"
+          to="/client/profile"
           className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-300"
           aria-label="Profile"
         >

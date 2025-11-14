@@ -1,11 +1,12 @@
-import ClientMain from "../../components/Client/ClientMain";
+import { Outlet } from "react-router-dom";
 import NavBar from "../../components/Layouts/NavBar";
+import Products from "../../components/Client/Products";
 
 export default function ClientDashboard() {
     return (
-        <div className="">
-
-            <ClientMain />
+        <div>
+            <Products />
+            <Outlet />
         </div>
     );
 }
