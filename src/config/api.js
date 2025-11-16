@@ -14,6 +14,9 @@ export const API_ENDPOINTS = {
     },
     PROFILE: {
         MYPROFILE: "/auth/profile",
+    },
+    ORDERS: {
+        GET_ONE: "/orders/:userId",
     }
 };
 
