@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {api} from "../../config/api";     
 import API_ENDPOINTS from "../../config/api"; 
-function Orders() {
+function Order() {
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
@@ -41,4 +41,4 @@ function Orders() {
   );
 }
 
-export default Orders;
+export default Order;

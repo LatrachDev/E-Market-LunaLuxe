@@ -17,6 +17,7 @@ export const API_ENDPOINTS = {
     },
     ORDERS: {
         GET_ONE: "/orders/:userId",
+        GET_ALL:"/orders",
     }
 };
 
