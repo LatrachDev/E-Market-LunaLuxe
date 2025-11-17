@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import {api} from "../config/api";
-import { setOrders, setLoading, setError } from "../App/slices/orderSlice";
-import { fetchOrders } from "../App/slices/orderSlice";
+import { setOrders, setLoading, setError } from "../features/orderSlice";
+import { fetchOrders } from "../features/orderSlice";
 import { useEffect } from "react";
 
 

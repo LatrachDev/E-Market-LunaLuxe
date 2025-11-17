@@ -8,7 +8,7 @@ import ClientDashboard from "../pages/Client/ClientDashboard";
 import ProtectedRoute from "./ProtectedRoute";
 import AdminDashboard from "../pages/Admin/AdminDashboard";
 import SellerPage from "../pages/Seller/SellerPage";
-import Layout from "../components/Layouts/Layout";
+import Layout from "../components/Layout";
 import ProfilePage from "../pages/Client/ProfilePage";
 import Order from "../components/Client/Order";
 import Orders from "../components/Admin/Orders";
