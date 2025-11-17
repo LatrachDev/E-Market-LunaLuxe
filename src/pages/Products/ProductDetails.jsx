@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { ShoppingCart, ArrowLeft, Heart, Share2 } from "lucide-react";
 import axios from "axios";
 import API_ENDPOINTS from "../../config/api";
-import Layout from "../../components/Layouts/Layout";
+import Layout from "../../components/Layout";
 
 const PLACEHOLDER_IMAGE = "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&h=500&fit=crop";
 
