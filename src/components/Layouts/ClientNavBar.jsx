@@ -1,10 +1,23 @@
 import { Link } from "react-router-dom";
 import { Package, ShoppingCart, User, LogOut } from "lucide-react";
-import { useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 
 function ClientNavBar() {
 
   const [open, setOpen] = useState(false);
+  const modalRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [open]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -63,7 +76,7 @@ function ClientNavBar() {
         </button>
 
         {open && (
-          <div className="absolute top-12 right-6 bg-white shadow-md rounded-md p-4 z-50">
+          <div ref={modalRef} className="absolute top-12 right-6 bg-white shadow-md rounded-md p-4 z-50">
               <Link
                 to="/client/profile"
                 onClick={handleClose}
