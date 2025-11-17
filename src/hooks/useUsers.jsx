@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import API_ENDPOINTS, { api } from "../../config/api";
+import API_ENDPOINTS, { api } from "../config/api";
 
 // const API_URL = "http://localhost:3000/api/users";
 
@@ -40,8 +40,8 @@ export function useUsers(page = 1) {
   return useQuery({
     queryKey: ["users", page],
     queryFn: async () => {
-      const res = await api.get(`/admin/users?page=${page}`);
-      return res.data;
+      const res = await api.get(`/users?page=${page}`);
+      return res.data.data;
     },
     keepPreviousData: true,
     staleTime: 5 * 60 * 1000,
@@ -52,7 +52,7 @@ export function useUsers(page = 1) {
 export function useCreateUser() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (user) => api.post("/admin/users", user),
+    mutationFn: (user) => api.post("/users", user),
     onSuccess: () => queryClient.invalidateQueries(["users"]),
   });
 }
@@ -61,7 +61,7 @@ export function useCreateUser() {
 export function useUpdateUser() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }) => api.put(`/admin/users/${id}`, data),
+    mutationFn: ({ id, data }) => api.put(`/users/${id}/role`, data),
     onSuccess: () => queryClient.invalidateQueries(["users"]),
   });
 }
@@ -70,7 +70,7 @@ export function useUpdateUser() {
 export function useDeleteUser() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id) => api.delete(`/admin/users/${id}`),
+    mutationFn: (id) => api.delete(`/users/${id}`),
     onSuccess: () => queryClient.invalidateQueries(["users"]),
   });
 }

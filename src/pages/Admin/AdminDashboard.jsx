@@ -82,7 +82,7 @@ function AdminDashboard() {
         );
 
       case 'users':
-        <UserManagement />
+        return <UserManagement />
 
       case 'overview':
       default:
