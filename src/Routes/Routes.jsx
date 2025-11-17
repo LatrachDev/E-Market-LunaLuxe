@@ -5,7 +5,7 @@ import NotFound from "../pages/Error/NotFound";
 import LoginPage from '../pages/Auth/LoginPage';
 import SignupPage from '../pages/Auth/SignupPage';
 import ClientDashboard from "../pages/Client/ClientDashboard";
-import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
+import ProtectedRoute from "./ProtectedRoute";
 import AdminDashboard from "../pages/Admin/AdminDashboard";
 import SellerPage from "../pages/Seller/SellerPage";
 import Layout from "../components/Layouts/Layout";
