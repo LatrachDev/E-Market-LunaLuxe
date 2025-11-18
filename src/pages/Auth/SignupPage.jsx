@@ -5,6 +5,10 @@ import LoginImage from "../../assets/Images/login-image.png";
 import LoginHeader from "../../components/LoginHeader";
 import axios from "axios";
 import API_ENDPOINTS, { api } from "../../config/api";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "../../features/authSlice";
+import store from "../../features/store";
+
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
@@ -16,6 +20,8 @@ export default function SignupPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
 
   // Hide overflow for the signup page
   useEffect(() => {
@@ -85,6 +91,14 @@ export default function SignupPage() {
 
       console.log('response: ', response);
       
+
+      dispatch(setCredentials({
+      token: response.data.data.token,
+      user: response.data.data.user,
+    }));
+    console.log(store.getState());
+    
+
       if (response.data?.data?.token) {
         localStorage.setItem('token', response.data.data.token);
         console.log('token stored successfully');

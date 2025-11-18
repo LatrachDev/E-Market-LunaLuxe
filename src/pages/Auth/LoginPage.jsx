@@ -3,6 +3,9 @@ import LoginImage from "../../assets/Images/login-image.png";
 import LoginHeader from "../../components/LoginHeader"
 import { useEffect, useState } from "react";
 import API_ENDPOINTS, { api } from "../../config/api";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "../../features/authSlice";
+
 
 export default function Login() {
 
@@ -11,6 +14,8 @@ export default function Login() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,6 +29,12 @@ export default function Login() {
       });
       setSuccess("Login successful!");
       console.log('response :', response);
+
+        dispatch(setCredentials({
+      token: response.data.data.token,
+      user: response.data.data.user,
+    }));
+
 
       if (response.data?.data?.token) {
         localStorage.setItem('token', response.data.data.token);
