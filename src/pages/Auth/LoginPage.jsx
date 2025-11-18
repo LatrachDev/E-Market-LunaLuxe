@@ -3,43 +3,47 @@ import LoginImage from "../../assets/Images/login-image.png";
 import LoginHeader from "../../components/LoginHeader"
 import { useEffect, useState } from "react";
 import API_ENDPOINTS, { api } from "../../config/api";
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { ToastContainer, toast } from "react-toastify";
+
+
+const schema = yup.object({
+  email: yup.string().required("L'email est requis").email("Email invalide"),
+  password: yup.string().required("Le mot de passe est requis").min(6, "Au moins 6 caractères"),
+}).required();
 
 export default function Login() {
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setSuccess("");
+  const { register: loginField, handleSubmit, formState: { errors, isSubmitting } } = useForm({
+    resolver: yupResolver(schema),
+  });
+const onSubmit = async (data) => {
 
     try {
       const response = await api.post(API_ENDPOINTS.AUTH.LOGIN, {
-        email,
-        password,
+        email: data.email,
+        password: data.password,
       });
-      setSuccess("Login successful!");
-      console.log('response :', response);
 
       if (response.data?.data?.token) {
-        localStorage.setItem('token', response.data.data.token);
-        console.log('token stored successfully');
+        localStorage.setItem("token", response.data.data.token);
       }
 
       if (response.data?.data?.user) {
-        localStorage.setItem('user', JSON.stringify(response.data.data.user));
-        console.log('user stored successfully');
+        localStorage.setItem("user", JSON.stringify(response.data.data.user));
       }
 
-      navigate('/client');
-    } catch (error) {
-      setError(error.response?.data?.message || "Login failed. Please try again.");
+      toast.success("Connexion réussie !");
+      setTimeout(() => navigate("/client"), 1000);
+
+    } catch (err) {
+      const msg = err.response?.data?.message || "Login failed. Please try again.";
+      toast.error(msg);
     }
-  }
+  };
 
   // this use effect for hide the overflow for the login page!
   useEffect(() => {
@@ -82,29 +86,31 @@ export default function Login() {
           </h1>
 
           {/* Success Message */}
-          {success && (
+          {/* {success && (
           <div className="w-full max-w-md mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
             {success}
           </div>
-        )}
+        )} */}
 
           {/* Error Message */}
-          {error && (
+          {/* {error && (
           <div className="w-full max-w-md mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
             {error}
           </div>
-        )}
+        )} */}
 
-          <form className="w-full max-w-md font-montserrat" onSubmit={handleSubmit}>
+          <form className="w-full max-w-md font-montserrat" onSubmit={handleSubmit(onSubmit)}>
             {/* Email Input */}
             <div className="mb-[34px]">
               <input
                 type="email"
                 placeholder="EMAIL"
-                onChange={(e) => setEmail(e.target.value)}
+                 {...loginField("email")}
                 className=" placeholder:opacity-50 w-full p-3 border border-black focus:border-brandRed focus:outline-none transition-colors bg-white text-brandBrown"
-                required
               />
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+              )}
             </div>
 
             {/* Password Input */}
@@ -112,10 +118,12 @@ export default function Login() {
               <input
                 type="password"
                 placeholder="PASSWORD"
-                onChange={(e) => setPassword(e.target.value)}
+                {...loginField("password")}
                 className=" placeholder:opacity-50 w-full p-3 border border-black focus:border-brandRed focus:outline-none transition-colors bg-white text-brandBrown"
-                required
               />
+               {errors.password && (
+                <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+              )}
             </div>
 
             {/* Login Button */}
@@ -145,6 +153,17 @@ export default function Login() {
             </div>
           </form>
         </div>
+          <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       </div>
     </>
   );
