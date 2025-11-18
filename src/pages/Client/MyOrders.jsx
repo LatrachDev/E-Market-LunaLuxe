@@ -5,10 +5,18 @@ import { useSelector } from "react-redux";
 export default function OrdersPage() {
   // récupère l'id du user connecté depuis ton authSlice
   const user = useSelector((state) => state.auth.user)
+  console.log("hi");
+  console.log(user);
+  const authState = useSelector(state => state.auth);
+console.log("AUTH STATE =", authState);
+
+  
   const { orders, loading, error } = useOrders(user?._id);
+console.log(orders);
 
   if (loading) return <p>Chargement...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
+  
 
   return (
     <div>

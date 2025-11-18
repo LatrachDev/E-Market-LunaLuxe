@@ -36,23 +36,25 @@ const ordersSlice = createSlice({
     setError(state, action) {
       state.error = action.payload;
     },
-    extraReducers: (builder) => {
-      builder
-        .addCase(fetchOrders.pending, (state) => {
-          state.loading = true;
-          state.error = null;
-        })
-        .addCase(fetchOrders.fulfilled, (state, action) => {
-          state.orders = action.payload;
-          state.loading = false;
-        })
-        .addCase(fetchOrders.rejected, (state, action) => {
-          state.loading = false;
-          state.error = action.payload;
-        });
-    },
+  },
+
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchOrders.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchOrders.fulfilled, (state, action) => {
+        state.orders = action.payload;
+        state.loading = false;
+      })
+      .addCase(fetchOrders.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
+
+
 
 export const { setLoading, setOrders, setError } = ordersSlice.actions;
 

@@ -5,12 +5,12 @@ import { fetchOrders } from "../features/orderSlice";
 import { useEffect } from "react";
 
 
-export default function useOrders() {
+export default function useOrders(userId) {
   const dispatch = useDispatch();
   const orders = useSelector((state) => state.orders.orders);
   const loading = useSelector((state) => state.orders.loading);
   const error = useSelector((state) => state.orders.error);
-  const userId = useSelector((state) => state.auth.user?._id);
+  // const userId = useSelector((state) => state.auth.user?._id);
 
   const loadOrders = async () => {
     dispatch(setLoading(true));
@@ -29,9 +29,8 @@ export default function useOrders() {
   };
 
    useEffect(() => {
-    if(userId) dispatch(fetchOrders(userId));
-  }, [dispatch, userId]);
-
+  if (userId) dispatch(fetchOrders(userId));
+}, [dispatch, userId]);
   return {
     orders,
     loading,
