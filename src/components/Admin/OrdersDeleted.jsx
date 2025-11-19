@@ -1,0 +1,23 @@
+import React, { useEffect } from 'react'
+import useOrders from '../../Hooks/UseOrders';
+
+function OrdersDeleted() {
+const { orders,loadDeletedOrders } = useOrders();
+
+  useEffect(() => {
+    loadDeletedOrders();
+  }, []);
+
+  return (
+    <div>
+        <h1>Orders Deleted</h1>
+        <ul>
+          {orders.map((order) => (
+            <li key={order.id}>{order.data.join("\n ")}</li>
+          ))}
+        </ul>
+    </div>
+  );
+}
+
+export default OrdersDeleted;

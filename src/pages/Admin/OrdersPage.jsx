@@ -2,13 +2,15 @@ import React, { useEffect } from "react";
 import useOrders from "../../Hooks/UseOrders";
 
 export default function OrdersPage() {
-  const { orders, loading, error, loadOrders } = useOrders();
+  const { orders, loading, error, loadOrdersAdmin } = useOrders();
+  console.log(orders);
   console.log("hi");
+  console.log(error);
   
 console.log("Redux STORE orders:", orders);
 
   useEffect(() => {
-    loadOrders();
+    loadOrdersAdmin();
   }, []);
 
   if (loading) return <p>Chargement...</p>;
@@ -16,7 +18,7 @@ console.log("Redux STORE orders:", orders);
 
   return (
     <div>
-      <h1>Mes commandes</h1>
+      <h1>les commandes</h1>
 
      {orders.map(order => (
  <div key={order._id}>
