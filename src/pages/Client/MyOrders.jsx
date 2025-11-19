@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import useOrders from "../../Hooks/UseOrders";
 import { useSelector } from "react-redux";
 
@@ -11,16 +11,19 @@ export default function OrdersPage() {
 console.log("AUTH STATE =", authState);
 
   
-  const { orders, loading, error } = useOrders(user?._id);
+  const { orders, loading, error , loadOrdersUser} = useOrders(user?._id);
 console.log(orders);
 
   if (loading) return <p>Chargement...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
   
-
+  useEffect(() => {
+    loadOrdersUser();
+  }, [user]);
   return (
     <div>
       <h1>Mes commandes</h1>
+      
       {orders.map(order => (
         <div key={order._id} className="border p-4 mb-4 rounded">
           <p><strong>Status:</strong> {order.status}</p>
