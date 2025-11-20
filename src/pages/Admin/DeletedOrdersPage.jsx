@@ -1,5 +1,5 @@
 import React from "react";
-import Orders from "../../components/Admin/Orders";
+import OrdersDeleted from "../../components/Admin/OrdersDeleted";
 import AdminSidebar from "../../components/Admin/Layouts/AdminSidebar";
 import adminNavLinks from "../../constants/adminNavLinks";
 
@@ -18,8 +18,8 @@ export default function OrdersPage() {
       </div>
 
       {/* Main content */}
-      <div className="flex scale-85 -ml-24">
-        <Orders />
+      <div className="flex justify-center items-center  ">
+        <OrdersDeleted />
       </div>
     </div>
   );

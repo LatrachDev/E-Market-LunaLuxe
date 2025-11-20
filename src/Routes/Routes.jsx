@@ -21,7 +21,8 @@ import Orders from "../components/Admin/Orders";
 import OrdersPage from "../pages/Admin/OrdersPage";
 import MyOrders from "../pages/Client/MyOrders";
 import CreateOrder from "../components/Client/createOrder";
-import OrdersDeleted from "../components/Admin/OrdersDeleted";
+// import OrdersDeleted from "../components/Admin/OrdersDeleted";
+import DeletedOrdersPage from "../pages/Admin/DeletedOrdersPage";
 
 export default function RoutesList() {
 
@@ -53,7 +54,7 @@ export default function RoutesList() {
             </Route>
             
             <Route path="/orders" element={<ProtectedRoute><Layout><OrdersPage /></Layout></ProtectedRoute>} />
-            <Route path="/orders/deleted" element={<ProtectedRoute><Layout><OrdersDeleted /></Layout></ProtectedRoute>} />
+            <Route path="/orders/deleted" element={<ProtectedRoute><Layout><DeletedOrdersPage /></Layout></ProtectedRoute>} />
             
             {/* Seller Routes */}
             <Route path="/seller/:sellerId?" element={<ProtectedRoute><SellerPage /></ProtectedRoute>} />

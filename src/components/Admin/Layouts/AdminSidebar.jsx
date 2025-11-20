@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-export default function AdminSidebar({ navLinks }) {
+export default function AdminSidebar({ navLinks=[] }) {
   return (
     <aside className="relative w-full bg-white shadow-sm lg:sticky lg:top-0 lg:h-screen lg:max-h-screen lg:w-72 lg:overflow-y-auto">
       <div className="absolute inset-x-0 top-0 h-24 bg-linear-to-br from-brandRed via-[#c35a4c] to-[#f0d6d1] opacity-90" aria-hidden="true" />
