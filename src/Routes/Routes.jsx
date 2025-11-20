@@ -21,7 +21,6 @@ import Orders from "../components/Admin/Orders";
 import OrdersPage from "../pages/Admin/OrdersPage";
 import MyOrders from "../pages/Client/MyOrders";
 import CreateOrder from "../components/Client/createOrder";
-// import OrdersDeleted from "../components/Admin/OrdersDeleted";
 import DeletedOrdersPage from "../pages/Admin/DeletedOrdersPage";
 
 export default function RoutesList() {
