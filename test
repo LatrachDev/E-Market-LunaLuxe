@@ -1,0 +1,58 @@
+6. Liste finale des tâches (à mettre dans Trello)
+USER
+
+ Fetch /orders/user/:id
+
+ Page liste commandes
+
+ Page détails commande
+
+ Bouton annuler commande
+
+ Checkout → POST /orders
+
+SELLER
+
+ Fetch /orders
+
+ Filtrer par seller_id
+
+ Page liste seller
+
+ Page détails seller
+
+ Modifier statut
+
+ADMIN
+
+ Fetch /orders
+
+ Modifier statut
+
+ Soft delete
+
+ Voir commandes supprimées
+
+ Restore commande
+
+GLOBAL
+
+ ordersSlice
+
+ React Query caching
+
+ Protected routes
+
+ Design & UX
+
+ Tests unitaires (reducers)
+
+ Tests intégration (checkout, update status)
+
+
+ <button
+                      onClick={() => updateOrderStatus(order._id)}
+                      className="px-4 py-2 rounded-xl bg-brandRed text-white font-semibold hover:bg-hoverBrandRed transition"
+                    >
+                      Update
+                    </button>

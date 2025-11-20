@@ -4,6 +4,7 @@ import SellerSidebar from '../../components/Seller/Layouts/SellerSidebar';
 import MyProducts from '../../components/Seller/MyProducts';
 import Orders from '../../components/Seller/Orders';
 import CouponManagement from '../../components/Seller/CouponManagement';
+import SellerStatsPage from '../../components/Seller/SellerStatsPage';
 
 const navLinks = [
   { id: 'overview', label: 'Dashboard Overview', icon: '🏠' },
@@ -50,30 +51,7 @@ function SellerPage() {
 
       case 'overview':
       default:
-        return (
-          <div className="rounded-3xl border border-brandRed/10 bg-white p-8 shadow-sm">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div className="rounded-xl border border-brandRed/10 bg-white p-6 shadow-sm">
-                <h3 className="text-sm font-montserrat text-gray-600 mb-2">Total Products</h3>
-                <p className="text-3xl font-bold font-playfair text-brandRed">24</p>
-              </div>
-              <div className="rounded-xl border border-brandRed/10 bg-white p-6 shadow-sm">
-                <h3 className="text-sm font-montserrat text-gray-600 mb-2">Total Orders</h3>
-                <p className="text-3xl font-bold font-playfair text-brandRed">156</p>
-              </div>
-              <div className="rounded-xl border border-brandRed/10 bg-white p-6 shadow-sm">
-                <h3 className="text-sm font-montserrat text-gray-600 mb-2">Total Revenue</h3>
-                <p className="text-3xl font-bold font-playfair text-brandRed">$12,450</p>
-              </div>
-            </div>
-            <h2 className="text-2xl font-semibold font-playfair text-gray-900 mb-4">
-              Dashboard Overview
-            </h2>
-            <p className="text-sm font-montserrat text-gray-600">
-              Welcome to your seller dashboard. Use the navigation menu to manage your products, view orders, and create coupons.
-            </p>
-          </div>
-        );
+        return <SellerStatsPage />;
     }
   };
 

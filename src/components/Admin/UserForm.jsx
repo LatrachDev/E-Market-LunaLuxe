@@ -6,7 +6,7 @@ const schema = yup.object().shape({
   fullname: yup.string().required(),
   email: yup.string().email().required(),
   role: yup.string().oneOf(["user", "seller", "admin"]).required(),
-   password: { type: String },
+//    password: { type: String },
 });
 
 export default function UserForm({ onSubmit, defaultValues }) {

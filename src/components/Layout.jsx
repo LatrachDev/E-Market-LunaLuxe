@@ -12,7 +12,7 @@ export default function Layout({ children }) {
     return (
         <div className="min-h-screen flex flex-col">
             {authenticated ? <ClientNavBar /> : <NavBar />}
-            <main className="flex-1">
+            <main className="flex-1 mt-16">
                 {children}
             </main>
             <Footer />
