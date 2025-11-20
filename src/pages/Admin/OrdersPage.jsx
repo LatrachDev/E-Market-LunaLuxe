@@ -2,7 +2,7 @@ import React, { use, useEffect } from "react";
 import useOrders from "../../Hooks/UseOrders";
 
 export default function OrdersPage() {
-  const { orders, loading, error, loadOrdersAdmin ,deleteOrder } = useOrders();
+  const { orders, loading, error, loadOrdersAdmin ,deleteOrder,updateOrderStatus } = useOrders();
   console.log(orders);
   console.log("hi");
   console.log(error);
@@ -39,6 +39,7 @@ console.log("Redux STORE orders:", orders);
     </div>
   ))}
   <button onClick={() => deleteOrder(order._id)}>delete order</button>
+  <button onClick={() => updateOrderStatus(order._id)}>update status</button>
 
 </div>
 
