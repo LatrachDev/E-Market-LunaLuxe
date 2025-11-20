@@ -22,6 +22,7 @@ import OrdersPage from "../pages/Admin/OrdersPage";
 import MyOrders from "../pages/Client/MyOrders";
 import CreateOrder from "../components/Client/createOrder";
 import OrdersDeleted from "../components/Admin/OrdersDeleted";
+import Cart from "../components/Client/Cart";
 
 export default function RoutesList() {
 
@@ -34,6 +35,7 @@ export default function RoutesList() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/products/:id" element={<ProductDetails />} />
+            <Route path="/cart" element={<Layout><Cart /></Layout>} />
 
             <Route path="/client">
                 <Route index element={<ProtectedRoute><Layout><ClientDashboard /></Layout></ProtectedRoute>} />
