@@ -10,10 +10,18 @@ import AdminDashboard from "../pages/Admin/AdminDashboard";
 import SellerPage from "../pages/Seller/SellerPage";
 import Layout from "../components/Layout";
 import ProfilePage from "../pages/Client/ProfilePage";
+import AdminOverview from "../pages/Admin/AdminOverview";
+import AdminReports from "../pages/Admin/AdminReports";
+import AdminProducts from "../pages/Admin/AdminProducts";
+import AdminCategories from "../pages/Admin/AdminCategories";
+import AdminUsers from "../components/Admin/UserManagement";
+import FeedbackPage from "../pages/Admin/FeedbackPage";
 import Order from "../components/Client/Order";
 import Orders from "../components/Admin/Orders";
 import OrdersPage from "../pages/Admin/OrdersPage";
 import MyOrders from "../pages/Client/MyOrders";
+import CreateOrder from "../components/Client/createOrder";
+import OrdersDeleted from "../components/Admin/OrdersDeleted";
 
 export default function RoutesList() {
 
@@ -31,14 +39,24 @@ export default function RoutesList() {
                 <Route index element={<ProtectedRoute><Layout><ClientDashboard /></Layout></ProtectedRoute>} />
                 <Route path="profile" element={<ProtectedRoute><Layout><ProfilePage /></Layout></ProtectedRoute>} />
                 <Route path="myOrders" element={<ProtectedRoute><Layout><MyOrders /></Layout></ProtectedRoute>}/>
+                <Route path="createOrder" element={<ProtectedRoute><Layout><CreateOrder /></Layout></ProtectedRoute>}/>
             </Route>
 
             {/* Admin Routes */}
-            <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+            <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>}>
+                <Route index element={<AdminOverview />} />
+                <Route path="reports" element={<AdminReports />} />
+                <Route path="products" element={<AdminProducts />} />
+                <Route path="categories" element={<AdminCategories />} />
+                <Route path="users" element={<AdminUsers />} />
+                <Route path="feedback" element={<FeedbackPage />} />
+            </Route>
+            
             <Route path="/orders" element={<ProtectedRoute><Layout><OrdersPage /></Layout></ProtectedRoute>} />
+            <Route path="/orders/deleted" element={<ProtectedRoute><Layout><OrdersDeleted /></Layout></ProtectedRoute>} />
             
             {/* Seller Routes */}
-            <Route path="/seller" element={<ProtectedRoute><SellerPage /></ProtectedRoute>} />
+            <Route path="/seller/:sellerId?" element={<ProtectedRoute><SellerPage /></ProtectedRoute>} />
             
             {/* Error Routes */}
             <Route path={'*'} element={<NotFound />} />

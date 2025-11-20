@@ -47,6 +47,15 @@ const onSubmit = async (data) => {
         localStorage.setItem("user", JSON.stringify(response.data.data.user));
       }
 
+      if (response.data?.data?.user?.role === "admin") {
+        navigate('/admin');
+      } else if (response.data?.data?.user?.role === "user") {
+        navigate('/client');
+      } else if (response.data?.data?.user?.role === "seller") {
+        const sellerId = response.data?.data?.user?._id || response.data?.data?.user?.id;
+        navigate(`/seller/${sellerId}`);
+      }
+
       toast.success("Connexion réussie !");
       setTimeout(() => navigate("/client"), 1000);
 

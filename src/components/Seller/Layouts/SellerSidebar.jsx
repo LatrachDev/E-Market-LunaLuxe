@@ -1,6 +1,23 @@
 import React from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export default function SellerSidebar({ navLinks, activeSection, onSelect }) {
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    window.location.href = '/';
+  }
+
+  const { sellerId } = useParams();
+  const navigate = useNavigate();
+
+  const handleSelect = (sectionId) => {
+    onSelect?.(sectionId);
+    if (sellerId) {
+      navigate(`/seller/${sellerId}?section=${sectionId}`);
+    }
+  };
+  
   return (
     <aside className="relative w-full bg-white shadow-sm lg:sticky lg:top-0 lg:h-screen lg:max-h-screen lg:w-72 lg:overflow-y-auto">
       <div className="absolute inset-x-0 top-0 h-24 bg-linear-to-br from-brandRed via-[#c35a4c] to-[#f0d6d1] opacity-90" aria-hidden="true" />
@@ -18,7 +35,7 @@ export default function SellerSidebar({ navLinks, activeSection, onSelect }) {
               <li key={link.id}>
                 <button
                   type="button"
-                  onClick={() => onSelect?.(link.id)}
+                  onClick={() => handleSelect(link.id)}
                   className={`group flex w-full items-center justify-between rounded-xl px-4 py-3 text-sm font-medium font-montserrat transition ${
                     isActive
                       ? 'bg-brandRed text-white shadow-md'
@@ -62,7 +79,7 @@ export default function SellerSidebar({ navLinks, activeSection, onSelect }) {
           Contact Support
         </button>
 
-        <button
+        <button onClick={handleLogout}
           className="mt-2 w-full cursor-pointer rounded-lg bg-brandRed px-4 py-2 text-sm font-semibold font-montserrat text-white transition hover:bg-hoverBrandRed"
         >
           Logout

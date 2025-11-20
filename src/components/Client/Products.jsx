@@ -177,9 +177,9 @@ export default function Products() {
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {paginatedProducts.map((product) => {
-              const imageUrl = product.image || 
+              const imageUrl = product.primaryImage ? import.meta.env.VITE_API_BASE_URL + product.primaryImage : 
                                (product.secondaryImages && product.secondaryImages.length > 0 
-                                 ? product.secondaryImages[0] 
+                                 ? import.meta.env.VITE_API_BASE_URL + product.secondaryImages[0] 
                                  : PLACEHOLDER_IMAGE);
 
               return (

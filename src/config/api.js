@@ -15,6 +15,15 @@ export const API_ENDPOINTS = {
     PROFILE: {
         MYPROFILE: "/auth/profile",
     },
+    SELLER: {
+        MY_PRODUCTS: (sellerId) => `/products/seller/${sellerId}`,
+        UPDATE_PRODUCT: (productId) => `/products/${productId}`,
+        CREATE_PRODUCT: "/products",
+        DELETE_PRODUCT: (productId) => `/products/${productId}`,
+    },
+    CATEGORIES: {
+        GET_ALL: "/categories",
+    },
     ORDERS: {
         GET_ONE: "/orders/:userId",
         GET_ALL:"/orders",
