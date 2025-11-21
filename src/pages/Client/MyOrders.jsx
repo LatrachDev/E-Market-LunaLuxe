@@ -11,7 +11,7 @@ export default function OrdersPage() {
 console.log("AUTH STATE =", authState);
 
   
-  const { orders, loading, error , loadOrdersUser} = useOrders(user?._id);
+  const { orders, loading, error , loadOrdersUser ,updateOrderStatus} = useOrders(user?._id);
 console.log(orders);
 
   if (loading) return <p>Chargement...</p>;
@@ -37,6 +37,8 @@ console.log(orders);
               <p>Price: {item.price} MAD</p>
             </div>
           ))}
+            <button onClick={() => updateOrderStatus(order._id)}>update status</button>
+
         </div>
       ))}
     </div>

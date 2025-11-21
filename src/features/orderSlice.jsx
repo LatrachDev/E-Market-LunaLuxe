@@ -13,6 +13,18 @@ export const fetchOrders = createAsyncThunk(
   }
 );
 
+export const updateStatusOrder = createAsyncThunk(
+  "orders/updateStatusOrder",
+  async ({ id, status }, { rejectWithValue }) => {
+    try {
+      const res = await api.patch(`/orders/${id}/status`, { status });
+      return res.data.data;
+    }
+    catch (err) {
+      return rejectWithValue(err.response?.data?.message || err.message);
+    }
+  }
+);
 export const deletOrder =createAsyncThunk(
   "orders/deleteOrder",
   async (id, { rejectWithValue }) => {
@@ -56,6 +68,17 @@ export const createOrder = createAsyncThunk(
       const res = await api.post("/orders", orderData);
 
       return res.data.data.order;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || err.message);
+    }
+  }
+);
+export const restoreOrder = createAsyncThunk(
+  "orders/restoreOrder",
+  async (id, { rejectWithValue }) => {
+    try {
+      const res = await api.patch(`/orders/${id}/restore`);
+      return res.data.data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || err.message);
     }
@@ -125,6 +148,19 @@ const ordersSlice = createSlice({
   state.loading = false;
   state.error = action.payload;
 })
+
+// restore order
+      .addCase(restoreOrder.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(restoreOrder.fulfilled, (state, action) => {
+        state.loading = false;
+        state.orders.push(action.payload);
+      })
+      .addCase(restoreOrder.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
       // orders deleted
       .addCase(fetchOrdersDeleted.pending, (state) => {
         state.loading = true;

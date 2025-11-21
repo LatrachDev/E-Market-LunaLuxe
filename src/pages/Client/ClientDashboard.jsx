@@ -7,7 +7,7 @@ export default function ClientDashboard() {
     return (
         <div>
             <Products />
-            {/* <MyOrders /> */}
+            <MyOrders />
             <Outlet />
         </div>
     );

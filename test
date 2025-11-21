@@ -48,3 +48,11 @@ GLOBAL
  Tests unitaires (reducers)
 
  Tests intégration (checkout, update status)
+
+
+ <button
+                      onClick={() => updateOrderStatus(order._id)}
+                      className="px-4 py-2 rounded-xl bg-brandRed text-white font-semibold hover:bg-hoverBrandRed transition"
+                    >
+                      Update
+                    </button>
