@@ -2,6 +2,12 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 
 export default function AdminSidebar({ navLinks=[] }) {
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    window.location.href = '/';
+  }
+
   return (
     <aside className="relative w-full bg-white shadow-sm lg:sticky lg:top-0 lg:h-screen lg:max-h-screen lg:w-72 lg:overflow-y-auto">
       <div className="absolute inset-x-0 top-0 h-24 bg-linear-to-br from-brandRed via-[#c35a4c] to-[#f0d6d1] opacity-90" aria-hidden="true" />
@@ -55,19 +61,7 @@ export default function AdminSidebar({ navLinks=[] }) {
       </nav>
 
       <div className="relative hidden border-t border-white/10 mt-5 px-6 py-6 lg:block">
-        <p className="text-xs font-montserrat uppercase tracking-wide text-gray-500">
-          Need Assistance?
-        </p>
-        <p className="mt-2 text-sm font-montserrat text-gray-600">
-          Contact the support team or review the latest operation handbook.
-        </p>
-        <button
-          className="mt-4 cursor-pointer w-full rounded-lg bg-brandRed px-4 py-2 text-sm font-semibold font-montserrat text-white transition hover:bg-hoverBrandRed"
-        >
-          Contact Support
-        </button>
-
-        <button
+        <button onClick={handleLogout}
           className="mt-2 w-full cursor-pointer rounded-lg bg-brandRed px-4 py-2 text-sm font-semibold font-montserrat text-white transition hover:bg-hoverBrandRed"
         >
           Logout

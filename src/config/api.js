@@ -23,6 +23,17 @@ export const API_ENDPOINTS = {
     },
     CATEGORIES: {
         GET_ALL: "/categories",
+        GET_ONE: "/categories/:id",
+        CREATE_CATEGORY: "/categories",
+        UPDATE_CATEGORY: "/categories/:id",
+        DELETE_CATEGORY: "/categories/:id",
+    },
+    USERS: {
+        GET_ALL: "/users",
+        GET_ONE: "/users/:id",
+        CREATE_USER: "/users",
+        UPDATE_USER: "/users/:id",
+        DELETE_USER: "/users/:id",
     },
     ORDERS: {
         GET_ONE: "/orders/:userId",
