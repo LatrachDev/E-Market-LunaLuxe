@@ -42,10 +42,13 @@ const slice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(fetchCategoriesAsync.pending, (state) => {
+                console.log("fetchCategoriesAsync.pending");
+                
                 state.status = "loading";
                 state.error = null;
             })
             .addCase(fetchCategoriesAsync.fulfilled, (state, action) => {
+                console.log("fetchCategoriesAsync.fulfilled", action.payload);
                 state.status = "succeeded";
                 state.items = action.payload;
             })
@@ -75,9 +78,14 @@ const slice = createSlice({
             })
             .addCase(updateCategoryAsync.fulfilled, (state, action) => {
                 state.status = "succeeded";
-                const index = state.items.findIndex(c => c._id === action.payload._id);
-                if (index !== -1) {
-                    state.items[index] = action.payload;
+                // Use the id from payload or fallback to the id from thunk argument
+                const updatedId = action.payload?._id || action.meta.arg?.id;
+                console.log("updatedId", updatedId);
+                if (updatedId && action.payload) {
+                    const index = state.items.findIndex(c => c._id === updatedId);
+                    if (index !== -1) {
+                        state.items[index] = action.payload;
+                    }
                 }
             })
             .addCase(updateCategoryAsync.rejected, (state, action) => {
@@ -87,14 +95,21 @@ const slice = createSlice({
 
             // delete category
             .addCase(deleteCategoryAsync.pending, (state) => {
+                console.log("deleteCategoryAsync.pending");
                 state.status = "loading";
                 state.error = null;
             })
             .addCase(deleteCategoryAsync.fulfilled, (state, action) => {
+                console.log("deleteCategoryAsync.fulfilled", action.payload);
                 state.status = "succeeded";
-                state.items = state.items.filter((category) => category._id !== action.payload._id);
+                // Use the id from the thunk argument if payload is null
+                const deletedId = action.payload?._id || action.meta.arg;
+                if (deletedId) {
+                    state.items = state.items.filter((category) => category._id !== deletedId);
+                }
             })
             .addCase(deleteCategoryAsync.rejected, (state, action) => {
+                console.log("deleteCategoryAsync.rejected", action.payload);
                 state.status = "failed";
                 state.error = action.payload;
             });

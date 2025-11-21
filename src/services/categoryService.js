@@ -29,7 +29,7 @@ export const createCategory = async (categoryData) => {
 }
 export const updateCategory = async (categoryId, categoryData) => {
     try {
-        const response = await api.put(API_ENDPOINTS.CATEGORIES.UPDATE_CATEGORY.replace(':id', categoryId), categoryData);
+        const response = await api.patch(API_ENDPOINTS.CATEGORIES.UPDATE_CATEGORY.replace(':id', categoryId), categoryData);
         return response?.data?.category || null;
     } catch (error) {
         console.error('Error updating category:', error);
