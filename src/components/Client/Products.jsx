@@ -15,6 +15,17 @@ export default function Products() {
   const [sortBy, setSortBy] = useState("default");
   const [currentPage, setCurrentPage] = useState(1);
 
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/';
+
+  // Helper function to build image URL
+  const buildImageUrl = (path) => {
+    if (!path) return null;
+    if (path.startsWith("http") || path.startsWith("//")) return path;
+    // Remove leading slash if present to avoid double slashes
+    const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+    return apiBaseUrl ? `${apiBaseUrl.replace(/\/$/, '')}/${cleanPath}` : path;
+  };
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -177,18 +188,24 @@ export default function Products() {
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {paginatedProducts.map((product) => {
-              const imageUrl = product.primaryImage ? import.meta.env.VITE_API_BASE_URL + product.primaryImage : 
+              // Get image URL with priority: primaryImage > image > secondaryImages[0] > placeholder
+              const imagePath = product.primaryImage || 
+                               product.image || 
                                (product.secondaryImages && product.secondaryImages.length > 0 
-                                 ? import.meta.env.VITE_API_BASE_URL + product.secondaryImages[0] 
-                                 : PLACEHOLDER_IMAGE);
+                                 ? product.secondaryImages[0] 
+                                 : null);
+              const imageUrl = imagePath ? buildImageUrl(imagePath) : PLACEHOLDER_IMAGE;
 
               return (
                 <Link to={`/products/${product._id}`} className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
                   <div className="relative w-full h-80 overflow-hidden bg-brandSwhite">
                     <img 
                       src={imageUrl} 
-                      alt={product.title}
+                      alt={product.title || 'Product image'}
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.src = PLACEHOLDER_IMAGE;
+                      }}
                     />
                     <div className="absolute top-4 right-4 bg-brandRed text-white px-5 py-1 rounded-md text-sm font-montserrat font-light">
                       -20%

@@ -1,47 +1,32 @@
 import React, { useState } from 'react';
 import { Plus, Edit, Trash2, X } from 'lucide-react';
-
-const staticCoupons = [
-  {
-    id: 1,
-    code: "WELCOME20",
-    value: 20,
-    type: "percentage",
-    minimumPurchase: 50,
-    startDate: "2025-01-01",
-    expirationDate: "2025-12-31",
-    maxUsage: 100,
-    maxUsagePerUser: 1,
-    status: "active"
-  },
-  {
-    id: 2,
-    code: "SAVE50OFF",
-    value: 50,
-    type: "fixed",
-    minimumPurchase: 100,
-    startDate: "2025-01-15",
-    expirationDate: "2025-02-15",
-    maxUsage: null,
-    maxUsagePerUser: 2,
-    status: "active"
-  },
-  {
-    id: 3,
-    code: "SUMMER15",
-    value: 15,
-    type: "percentage",
-    minimumPurchase: 30,
-    startDate: "2025-06-01",
-    expirationDate: "2025-08-31",
-    maxUsage: 200,
-    maxUsagePerUser: 1,
-    status: "inactive"
-  },
-];
+import {
+  useCoupons,
+  useCreateCoupon,
+  useUpdateCoupon,
+  useDeleteCoupon,
+} from '../../Hooks/useCoupons';
+import { useSelector } from 'react-redux';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function CouponManagement() {
-  const [coupons, setCoupons] = useState(staticCoupons);
+
+  const { data: coupons = [], isLoading, isError } = useCoupons();
+  const createCoupon = useCreateCoupon();
+  const updateCoupon = useUpdateCoupon();
+  const deleteCoupon = useDeleteCoupon();
+
+  const storeUser = useSelector((state) => state.auth.user);
+  let persistedUser = null;
+  try {
+    persistedUser = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || 'null') : null;
+  } catch (e) {
+    persistedUser = null;
+  }
+  const user = storeUser || persistedUser;
+  const sellerId = user?._id || user?.id;
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCoupon, setEditingCoupon] = useState(null);
   const [formData, setFormData] = useState({
@@ -61,14 +46,14 @@ export default function CouponManagement() {
       setEditingCoupon(coupon);
       setFormData({
         code: coupon.code,
-        value: coupon.value.toString(),
-        type: coupon.type,
-        minimumPurchase: coupon.minimumPurchase.toString(),
-        startDate: coupon.startDate,
-        expirationDate: coupon.expirationDate,
+        value: (coupon.value ?? '').toString(),
+        type: coupon.type ?? 'percentage',
+        minimumPurchase: (coupon.minimumPurchase ?? 0).toString(),
+        startDate: coupon.startDate ? coupon.startDate.split('T')[0] : '',
+        expirationDate: coupon.expirationDate ? coupon.expirationDate.split('T')[0] : '',
         maxUsage: coupon.maxUsage ? coupon.maxUsage.toString() : '',
-        maxUsagePerUser: coupon.maxUsagePerUser.toString(),
-        status: coupon.status
+        maxUsagePerUser: (coupon.maxUsagePerUser ?? 1).toString(),
+        status: coupon.status ?? 'active'
       });
     } else {
       setEditingCoupon(null);
@@ -105,56 +90,65 @@ export default function CouponManagement() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     // Validation
     if (formData.code.length < 6 || formData.code.length > 20) {
-      alert('Coupon code must be between 6 and 20 characters');
+      toast.error('Coupon code must be between 6 and 20 characters');
       return;
     }
-    
+
     if (formData.type === 'percentage' && parseFloat(formData.value) > 100) {
-      alert('Percentage value cannot exceed 100%');
+      toast.error('Percentage value cannot exceed 100%');
       return;
     }
-    
+
     if (new Date(formData.expirationDate) <= new Date(formData.startDate)) {
-      alert('Expiration date must be after start date');
+      toast.error('Expiration date must be after start date');
       return;
     }
-    
+    const payload = {
+      code: formData.code,
+      type: formData.type,
+      value: parseFloat(formData.value),
+      minimumPurchase: parseFloat(formData.minimumPurchase),
+      startDate: formData.startDate,
+      expirationDate: formData.expirationDate,
+      maxUsage: formData.maxUsage ? parseInt(formData.maxUsage) : null,
+      maxUsagePerUser: parseInt(formData.maxUsagePerUser),
+      status: formData.status,
+      createdBy: sellerId,
+    };
+
     if (editingCoupon) {
-      // Update coupon
-      setCoupons(coupons.map(c => 
-        c.id === editingCoupon.id 
-          ? { 
-              ...editingCoupon, 
-              ...formData, 
-              value: parseFloat(formData.value),
-              minimumPurchase: parseFloat(formData.minimumPurchase),
-              maxUsage: formData.maxUsage ? parseInt(formData.maxUsage) : null,
-              maxUsagePerUser: parseInt(formData.maxUsagePerUser)
-            }
-          : c
-      ));
+      const id = editingCoupon._id || editingCoupon.id;
+      updateCoupon.mutate({ id, data: payload }, {
+        onSuccess: () => {
+          handleCloseModal();
+          toast.success('Coupon updated successfully');
+        },
+        onError: (err) => toast.error(err?.response?.data?.message || 'Failed to update coupon'),
+      });
     } else {
-      // Create new coupon
-      const newCoupon = {
-        id: coupons.length + 1,
-        ...formData,
-        value: parseFloat(formData.value),
-        minimumPurchase: parseFloat(formData.minimumPurchase),
-        maxUsage: formData.maxUsage ? parseInt(formData.maxUsage) : null,
-        maxUsagePerUser: parseInt(formData.maxUsagePerUser)
-      };
-      setCoupons([...coupons, newCoupon]);
+      createCoupon.mutate(payload, {
+        onSuccess: () => {
+          handleCloseModal();
+          toast.success('Coupon created successfully');
+        },
+        onError: (err) => toast.error(err?.response?.data?.message || 'Failed to create coupon'),
+      });
     }
-    handleCloseModal();
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to delete this coupon?')) {
-      setCoupons(coupons.filter(c => c.id !== id));
+  const handleDelete = (coupon) => {
+    const id = coupon._id || coupon.id;
+    if (!id) {
+      toast.error('Cannot delete: missing id');
+      return;
     }
+    deleteCoupon.mutate(id, {
+      onSuccess: () => toast.success('Coupon deleted'),
+      onError: (err) => toast.error(err?.response?.data?.message || 'Failed to delete coupon'),
+    });
   };
 
   return (
@@ -187,61 +181,74 @@ export default function CouponManagement() {
             </tr>
           </thead>
           <tbody>
-            {coupons.map((coupon) => (
-              <tr key={coupon.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                <td className="px-4 py-4">
-                  <span className="font-montserrat font-semibold text-gray-900">{coupon.code}</span>
-                </td>
-                <td className="px-4 py-4">
-                  <span className="font-montserrat text-gray-900">
-                    {coupon.type === 'percentage' ? `${coupon.value}%` : `$${coupon.value}`}
-                  </span>
-                </td>
-                <td className="px-4 py-4">
-                  <span className="px-3 py-1 rounded-full text-xs font-montserrat font-medium bg-blue-100 text-blue-700 capitalize">
-                    {coupon.type}
-                  </span>
-                </td>
-                <td className="px-4 py-4">
-                  <span className="font-montserrat text-gray-700">${coupon.minimumPurchase}</span>
-                </td>
-                <td className="px-4 py-4">
-                  <span className="font-montserrat text-gray-600 text-sm">{coupon.expirationDate}</span>
-                </td>
-                <td className="px-4 py-4">
-                  <span className="font-montserrat text-gray-700">
-                    {coupon.maxUsage ? coupon.maxUsage : '∞'}
-                  </span>
-                </td>
-                <td className="px-4 py-4">
-                  <span className={`px-3 py-1 rounded-full text-xs font-montserrat font-medium ${
-                    coupon.status === 'active'
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-gray-100 text-gray-700'
-                  }`}>
-                    {coupon.status.charAt(0).toUpperCase() + coupon.status.slice(1)}
-                  </span>
-                </td>
-                <td className="px-4 py-4">
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => handleOpenModal(coupon)}
-                      className="p-2 hover:bg-blue-100 rounded-lg transition-colors"
-                      title="Edit"
-                    >
-                      <Edit size={18} className="text-blue-600" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(coupon.id)}
-                      className="p-2 hover:bg-red-100 rounded-lg transition-colors"
-                      title="Delete"
-                    >
-                      <Trash2 size={18} className="text-red-600" />
-                    </button>
-                  </div>
-                </td>
+            {isLoading ? (
+              <tr>
+                <td colSpan={8} className="px-4 py-6 text-center text-sm text-gray-500">Loading coupons...</td>
               </tr>
-            ))}
+            ) : isError ? (
+              <tr>
+                <td colSpan={8} className="px-4 py-6 text-center text-sm text-red-500">Failed to load coupons</td>
+              </tr>
+            ) : coupons.length === 0 ? (
+              <tr>
+                <td colSpan={8} className="px-4 py-6 text-center text-sm text-gray-500">No coupons found</td>
+              </tr>
+            ) : (
+              coupons.map((coupon) => (
+                <tr key={coupon._id || coupon.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                  <td className="px-4 py-4">
+                    <span className="font-montserrat font-semibold text-gray-900">{coupon.code}</span>
+                  </td>
+                  <td className="px-4 py-4">
+                    <span className="font-montserrat text-gray-900">
+                      {coupon.type === 'percentage' ? `${coupon.value}%` : `$${coupon.value}`}
+                    </span>
+                  </td>
+                  <td className="px-4 py-4">
+                    <span className="px-3 py-1 rounded-full text-xs font-montserrat font-medium bg-blue-100 text-blue-700 capitalize">
+                      {coupon.type}
+                    </span>
+                  </td>
+                  <td className="px-4 py-4">
+                    <span className="font-montserrat text-gray-700">${coupon.minimumPurchase}</span>
+                  </td>
+                  <td className="px-4 py-4">
+                    <span className="font-montserrat text-gray-600 text-sm">{coupon.expirationDate}</span>
+                  </td>
+                  <td className="px-4 py-4">
+                    <span className="font-montserrat text-gray-700">
+                      {coupon.maxUsage ? coupon.maxUsage : '∞'}
+                    </span>
+                  </td>
+                  <td className="px-4 py-4">
+                    <span className={`px-3 py-1 rounded-full text-xs font-montserrat font-medium ${coupon.status === 'active'
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-gray-100 text-gray-700'
+                      }`}>
+                      {coupon.status.charAt(0).toUpperCase() + coupon.status.slice(1)}
+                    </span>
+                  </td>
+                  <td className="px-4 py-4">
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleOpenModal(coupon)}
+                        className="p-2 hover:bg-blue-100 rounded-lg transition-colors"
+                        title="Edit"
+                      >
+                        <Edit size={18} className="text-blue-600" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(coupon)}
+                        className="p-2 hover:bg-red-100 rounded-lg transition-colors"
+                        title="Delete"
+                      >
+                        <Trash2 size={18} className="text-red-600" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
@@ -276,6 +283,8 @@ export default function CouponManagement() {
                   maxLength={20}
                   required
                 />
+                {/* hidden seller id for backend (createdBy) */}
+                <input type="hidden" name="createdBy" value={sellerId || ''} />
                 <p className="mt-1 text-xs font-montserrat text-gray-500">
                   {formData.code.length}/20 characters
                 </p>
@@ -422,6 +431,17 @@ export default function CouponManagement() {
           </div>
         </div>
       )}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </div>
   );
 }

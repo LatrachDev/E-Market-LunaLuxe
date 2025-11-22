@@ -1,17 +1,13 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import SellerSidebar from '../../components/Seller/Layouts/SellerSidebar';
+import Sidebar from '../../components/Shared/Sidebar';
+import { sellerNavLinks } from '../../constants/sidebarLinks';
 import MyProducts from '../../components/Seller/MyProducts';
 import Orders from '../../components/Seller/Orders';
 import CouponManagement from '../../components/Seller/CouponManagement';
 import SellerStatsPage from '../../components/Seller/SellerStatsPage';
 
-const navLinks = [
-  { id: 'overview', label: 'Dashboard Overview', icon: '🏠' },
-  { id: 'my-products', label: 'My Products', icon: '🛍️' },
-  { id: 'orders', label: 'Orders', icon: '📦' },
-  { id: 'coupon-management', label: 'Manage Coupons', icon: '🎫' },
-];
+// navLinks pulled from centralized `sellerNavLinks`
 
 const sectionHeaders = {
   overview: {
@@ -58,8 +54,8 @@ function SellerPage() {
   return (
     <div className="min-h-screen bg-linear-to-br from-[#fef7f5] via-white to-white">
       <div className="flex min-h-screen flex-col lg:flex-row">
-        <SellerSidebar
-          navLinks={navLinks}
+        <Sidebar
+          navLinks={sellerNavLinks}
           activeSection={activeSection}
           onSelect={setActiveSection}
         />

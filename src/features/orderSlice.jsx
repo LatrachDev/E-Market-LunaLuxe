@@ -4,8 +4,26 @@ import { api } from "../config/api";
 export const fetchOrders = createAsyncThunk(
   "orders/fetchOrders",
   async (userId, { rejectWithValue }) => {
+    
     try {
-      const res = await api.get(`/orders/${userId}`);
+      const user = JSON.parse(localStorage.getItem('user'));
+      // console.log("Fetching orders for userId =", userId ? userId : user.id);
+      
+      const res = await api.get(`/orders/${userId ? userId : user.id}`);
+      console.log(userId);
+      
+      return res.data.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || err.message);
+    }
+  }
+);
+
+export const updateStatusOrder = createAsyncThunk(
+  "orders/updateStatusOrder",
+  async ({ id, newStatus }, { rejectWithValue }) => {
+    try {
+      const res = await api.patch(`/orders/${id}/status`, { newStatus });
       return res.data.data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || err.message);
@@ -61,6 +79,17 @@ export const createOrder = createAsyncThunk(
     }
   }
 );
+export const restoreOrder = createAsyncThunk(
+  "orders/restoreOrder",
+  async (id, { rejectWithValue }) => {
+    try {
+      const res = await api.patch(`/orders/${id}/restore`);
+      return res.data.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || err.message);
+    }
+  }
+);
 
 const ordersSlice = createSlice({
   name: "orders",
@@ -84,6 +113,22 @@ const ordersSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+      // update status order
+      .addCase(updateStatusOrder.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateStatusOrder.fulfilled, (state, action) => {
+        state.loading = false;
+        const index = state.orders.findIndex(order => order._id === action.payload._id);
+        if (index !== -1) {
+          state.orders[index] = action.payload;
+        }
+      })
+      .addCase(updateStatusOrder.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
 
       // FETCH ORDERS ADMIN
       .addCase(fetchOrdersAdmin.pending, (state) => {
@@ -125,6 +170,19 @@ const ordersSlice = createSlice({
   state.loading = false;
   state.error = action.payload;
 })
+
+// restore order
+      .addCase(restoreOrder.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(restoreOrder.fulfilled, (state, action) => {
+        state.loading = false;
+        state.orders.push(action.payload);
+      })
+      .addCase(restoreOrder.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
       // orders deleted
       .addCase(fetchOrdersDeleted.pending, (state) => {
         state.loading = true;

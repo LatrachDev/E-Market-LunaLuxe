@@ -94,6 +94,13 @@ function ClientNavBar() {
                 <LogOut size={24} className="w-5 h-5 text-gray-800 hover:text-brandBrown transition-colors" />
                 <p className="text-sm font-montserrat ml-2">Logout</p>
               </button>
+              <Link to="/client/myOrders"
+              className="p-2 rounded-full flex hover:bg-gray-100 transition-colors duration-300"
+              aria-label="My Orders"
+              >
+                <Package size={24} className="w-5 h-5 text-gray-800 hover:text-brandBrown transition-colors" />
+                <p className="text-sm font-montserrat ml-2">My Orders</p>
+              </Link>
           </div>
         )}
       </div>
