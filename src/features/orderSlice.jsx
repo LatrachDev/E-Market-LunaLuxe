@@ -77,6 +77,19 @@ export const createOrder = createAsyncThunk(
   }
 );
 
+export const getSellerOrders = createAsyncThunk(
+  "orders/getSellerOrders",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await api.get("/orders/seller"); 
+      return res.data.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || err.message);
+    }
+  }
+);
+
+
 
 
 export const restoreOrder = createAsyncThunk(
@@ -95,6 +108,7 @@ const ordersSlice = createSlice({
   name: "orders",
   initialState: {
     orders: [],
+    sellerOrders: [], 
     loading: false,
     error: null,
   },
@@ -192,6 +206,19 @@ const ordersSlice = createSlice({
         state.orders = action.payload;
       })
       .addCase(fetchOrdersDeleted.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+      // get seller orders
+      builder
+      .addCase(getSellerOrders.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getSellerOrders.fulfilled, (state, action) => {
+        state.loading = false;
+        state.orders = action.payload;
+      })
+      .addCase(getSellerOrders.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
