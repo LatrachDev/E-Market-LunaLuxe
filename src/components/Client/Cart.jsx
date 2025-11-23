@@ -3,6 +3,9 @@ import useCart, { useUpdateCartItem, useRemoveCartItem, useClearCart } from "../
 import ClientNavBar from "../ClientNavBar";
 import { Trash2, ShoppingCart, Plus, Minus } from "lucide-react";
 
+// ikram
+import CreateOrder from "../../components/Client/createOrder";
+
 // Récupération de l'id utilisateur depuis le localStorage
 const userId = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")).id : null;
 
@@ -11,6 +14,10 @@ export default function CartPage() {
   const updateCartItem = useUpdateCartItem(userId);
   const removeCartItem = useRemoveCartItem(userId);
   const clearCart = useClearCart(userId);
+
+  // ikram
+  const [showOrderModal, setShowOrderModal] = useState(false);
+
 
   const handleQuantityChange = (productId, quantity) => {
     if (quantity < 1) return;
@@ -204,12 +211,21 @@ export default function CartPage() {
                   </div>
                 </div>
 
-                <button
+                {/* <button
                   onClick={() => alert("Passer au checkout...")}
                   className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 >
                   Valider ma commande
-                </button>
+                </button> */}
+
+                {/* ikram */}
+                <button
+  onClick={() => setShowOrderModal(true)}
+  className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+>
+  Valider ma commande
+</button>
+
 
                 <div className="mt-4 p-4 bg-green-50 rounded-lg">
                   <p className="text-sm text-green-800 font-medium">✓ Paiement sécurisé</p>
@@ -220,6 +236,21 @@ export default function CartPage() {
           </div>
         )}
       </div>
+      {showOrderModal && (
+  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div className="bg-white rounded-2xl shadow-xl l relative p-0 h-100">
+      <button
+        onClick={() => setShowOrderModal(false)}
+        className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
+      >
+        ✖
+      </button>
+
+      <CreateOrder />
+    </div>
+  </div>
+)}
+
     </div>
   );
 }
