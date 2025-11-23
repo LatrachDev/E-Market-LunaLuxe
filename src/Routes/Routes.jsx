@@ -13,6 +13,7 @@ import ProfilePage from "../pages/Client/ProfilePage";
 import AdminOverview from "../pages/Admin/AdminOverview";
 import AdminReports from "../pages/Admin/AdminReports";
 import AdminProducts from "../pages/Admin/AdminProducts";
+import AdminProductDetails from "../pages/Admin/AdminProductDetails";
 import AdminCategories from "../pages/Admin/AdminCategories";
 import AdminUsers from "../components/Admin/UserManagement";
 import FeedbackPage from "../pages/Admin/FeedbackPage";
@@ -48,15 +49,15 @@ export default function RoutesList() {
                 <Route index element={<AdminOverview />} />
                 <Route path="reports" element={<AdminReports />} />
                 <Route path="products" element={<AdminProducts />} />
+                <Route path="products/:id" element={<AdminProductDetails />} />
                 <Route path="categories" element={<AdminCategories />} />
                 <Route path="users" element={<AdminUsers />} />
                 <Route path="feedback" element={<FeedbackPage />} />
                 <Route path="coupons" element={<AdminCoupons />} />
+                <Route path="orders" element={<OrdersPage />} />
+                <Route path="orders/deleted" element={<DeletedOrdersPage />} />
             </Route>
-            
-            <Route path="/orders" element={<ProtectedRoute><Layout><OrdersPage /></Layout></ProtectedRoute>} />
-            <Route path="/orders/deleted" element={<ProtectedRoute><Layout><DeletedOrdersPage /></Layout></ProtectedRoute>} />
-            
+
             {/* Seller Routes */}
             <Route path="/seller/:sellerId?" element={<ProtectedRoute requiredRole="seller"><SellerPage /></ProtectedRoute>} />
             

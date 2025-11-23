@@ -83,10 +83,6 @@ export default function Sidebar({ navLinks = [], activeSection, onSelect }) {
       </nav>
 
       <div className="relative hidden border-t border-white/10 mt-5 px-6 py-6 lg:block">
-        <p className="text-xs font-montserrat uppercase tracking-wide text-gray-500">Need Assistance?</p>
-        <p className="mt-2 text-sm font-montserrat text-gray-600">Contact the support team or review the latest operation handbook.</p>
-        <button className="mt-4 cursor-pointer w-full rounded-lg bg-brandRed px-4 py-2 text-sm font-semibold font-montserrat text-white transition hover:bg-hoverBrandRed">Contact Support</button>
-
         <button onClick={handleLogout} className="mt-4 w-full cursor-pointer rounded-lg bg-brandRed px-4 py-2 text-sm font-semibold font-montserrat text-white transition hover:bg-hoverBrandRed">Logout</button>
       </div>
     </aside>

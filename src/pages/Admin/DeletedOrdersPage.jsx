@@ -6,16 +6,6 @@ import { adminNavLinks } from "../../constants/sidebarLinks";
 export default function OrdersPage() {
   return (
     <div className="flex bg-[#fef7f5]">
-      
-      {/* Sidebar */}
-      <div className="hidden lg:block">
-        <Sidebar navLinks={adminNavLinks} />
-      </div>
-
-      {/* Mobile Sidebar (optional) */}
-      <div className="block lg:hidden">
-        <Sidebar navLinks={adminNavLinks} />
-      </div>
 
       {/* Main content */}
       <div className="flex justify-center items-center  ">

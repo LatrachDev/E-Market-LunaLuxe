@@ -80,8 +80,8 @@ export default function AdminProducts() {
                   <td className="px-4 py-3 text-gray-600">{product.stock ?? '-'}</td>
                   <td className="px-4 py-3 text-gray-600">{product.seller_id? product.seller_id : '-'}</td>
                   <td className="px-4 py-3">
-                    <div className="flex gap-2">
-                      <Link to={`/products/${product._id}`} className="rounded-full border border-brandRed px-3 py-1 text-xs font-semibold font-montserrat text-brandRed hover:bg-brandRed hover:text-white transition">View</Link>
+                      <div className="flex gap-2">
+                      <Link to={`/admin/products/${product._id}`} className="rounded-full border border-brandRed px-3 py-1 text-xs font-semibold font-montserrat text-brandRed hover:bg-brandRed hover:text-white transition">View</Link>
                     </div>
                   </td>
                 </tr>
