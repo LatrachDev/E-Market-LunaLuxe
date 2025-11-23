@@ -18,19 +18,6 @@ export const fetchOrders = createAsyncThunk(
     }
   }
 );
-
-export const updateStatusOrder = createAsyncThunk(
-  "orders/updateStatusOrder",
-  async ({ id, newStatus }, { rejectWithValue }) => {
-    try {
-      const res = await api.patch(`/orders/${id}/status`, { newStatus });
-      return res.data.data;
-    } catch (err) {
-      return rejectWithValue(err.response?.data?.message || err.message);
-    }
-  }
-);
-
 export const deletOrder =createAsyncThunk(
   "orders/deleteOrder",
   async (id, { rejectWithValue }) => {
@@ -54,16 +41,26 @@ export const fetchOrdersAdmin = createAsyncThunk(
     }
   }
 );
-
 export const fetchOrdersDeleted = createAsyncThunk(
   "orders/fetchOrdersDeleted",
   async (userId, { rejectWithValue }) => {
     try {
-    const res = await api.get("/orders/deleted");
+      const res = await api.get("/orders/deleted");
       return res.data.data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || err.message);
+    }
   }
+);
+export const updateStatusOrder = createAsyncThunk(
+  "orders/updateStatusOrder",
+  async ({ id, newStatus }, { rejectWithValue }) => {
+    try {
+      const res = await api.patch(`/orders/${id}/status`, { newStatus });
+      return res.data.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || err.message);
+    }
   }
 );
 export const createOrder = createAsyncThunk(

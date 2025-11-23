@@ -51,11 +51,11 @@ export default function CreateOrder() {
           </button>
         </form>
       </div>
-         <button onClick={() => updateOrderStatus({id: orders._id,newStatus: "shipped"})}
+        <button onClick={() => updateOrderStatus({id: orders._id,newStatus: "shipped"})}
                       className="px-5 py-2 rounded-xl bg-brandRed text-white font-semibold hover:bg-hoverBrandRed transition shadow-sm flex justify-center"
                     >
                       Checkout
-                    </button>
+        </button>
     </div>
   );
 }
