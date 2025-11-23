@@ -12,6 +12,7 @@ export default function ProductDetails() {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [sellerName, setSellerName] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const navigate = useNavigate();
@@ -46,6 +47,34 @@ export default function ProductDetails() {
       fetchProduct();
     }
   }, [id]);
+
+  // Fetch minimal public seller name if product only has seller_id
+  useEffect(() => {
+    if (!product) return;
+    // if product already contains seller object with fullname, use it
+    if (product.seller && (product.seller.fullname || product.seller.name)) {
+      setSellerName(product.seller.fullname || product.seller.name);
+      return;
+    }
+
+    const sellerId = product.seller_id || product.sellerId || null;
+    if (!sellerId) return;
+
+    let mounted = true;
+    const fetchSellerName = async () => {
+      try {
+        const res = await api.get(`/users/public/${sellerId}/username`);
+        const data = res.data?.data || res.data;
+        const name = data?.name || data?.fullname || null;
+        if (mounted) setSellerName(name);
+      } catch (err) {
+        console.error('Failed to fetch public seller name', err);
+      }
+    };
+
+    fetchSellerName();
+    return () => { mounted = false; };
+  }, [product]);
 
   const galleryImages = product
     ? [
@@ -101,8 +130,7 @@ export default function ProductDetails() {
 
   const productDetails = [
     { label: "Catégorie", value: categoryNames.length ? categoryNames.join(", ") : "Non spécifiées" },
-    { label: "Vendeur", value: product.seller?.fullname || "Non renseigné" },
-
+    { label: "Vendeur", value: sellerName || product.seller?.fullname || "Non renseigné" },
   ];
   
     
