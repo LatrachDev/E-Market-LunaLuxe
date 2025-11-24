@@ -2,12 +2,13 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ShoppingCart, ArrowLeft, Heart, Share2 } from "lucide-react";
 import API_ENDPOINTS, { api } from "../../config/api";
+import { useCart, } from "../../hooks/useCart";
 import Layout from "../../components/Layout";
 
 const PLACEHOLDER_IMAGE = "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&h=500&fit=crop";
 
 export default function ProductDetails() {
-
+  const { addToCart } = useCart();
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -57,6 +58,12 @@ export default function ProductDetails() {
     : [];
 
   const mainImage = galleryImages[activeImageIndex] || galleryImages[0] || PLACEHOLDER_IMAGE;
+
+  const handleAddToCart = () => {
+    if (product) {
+      addToCart.mutate({ productId: product._id, quantity });
+    }
+  };
 
   if (loading) {
     return (
@@ -223,8 +230,10 @@ export default function ProductDetails() {
                       </div>
                     </div>
                     <button
-                      onClick={(e) => e.preventDefault()}
-                      disabled={true}
+                      onClick={(e) => e.preventDefault()
+                        ? handleAddToCart(product, quantity)
+                        : handleAddToCart(product, quantity)
+                      }
                       className="w-full lg:w-[50%] mt-2 flex items-center justify-center gap-2 bg-brandRed text-white px-8 py-4 rounded-full hover:bg-hoverBrandRed transition-colors duration-300 font-montserrat font-medium text-lg disabled:bg-gray-400 disabled:cursor-not-allowed"
                     >
                       <ShoppingCart size={20} />
