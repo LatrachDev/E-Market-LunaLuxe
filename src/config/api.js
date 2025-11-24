@@ -14,6 +14,7 @@ export const API_ENDPOINTS = {
     },
     PROFILE: {
         MYPROFILE: "/auth/profile",
+        UPDATE_PROFILE: "/auth/profile",
     },
     SELLER: {
         MY_PRODUCTS: (sellerId) => `/products/seller/${sellerId}`,
