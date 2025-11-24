@@ -1,49 +1,91 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import API_ENDPOINTS, { api } from "../config/api";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { api } from "../config/api";
+import { toast } from "react-toastify";
+import { setCart, addItem, removeItem, updateQuantity, clearCart } from "../features/cartSlice";
 
-export default function useCart(userId) {
-    return useQuery({
-        queryKey: ["cart", userId],
-        queryFn: async () => {
-            const res = await api.get(`${API_ENDPOINTS.CART.GET_ALL}`);
-            return res.data.data;
-        },
-        // temps où les données sont fraîches donc pas de refetch
-        staleTime: 5 * 60 * 1000,
-    });
+export const useCart = (userId) => {
+const dispatch = useDispatch();
+const queryClient = useQueryClient();
+const cartRedux = useSelector((state) => state.cart);
+
+const basePath = "/cart" ;
+const queryKey = ["cart", userId]; 
+
+// Fetch panier complet
+const fetchCart = async () => {
+const res = await api.get(basePath, { headers: { "Cache-Control": "no-cache" } });
+return res.data.data; // retourne le panier complet
+};
+
+useEffect(() => {
+if (userId) {
+fetchCart()
+.then((cart) => dispatch(setCart(cart)))
+.catch((err) => {
+console.error(err);
+toast.error("Impossible de charger le panier");
+});
 }
+}, [userId]);
 
+const invalidateCart = () => queryClient.invalidateQueries(queryKey);
 
-export function useAddToCart(userId) {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: (item) => api.post(`${API_ENDPOINTS.CART}?userId=${userId}`, item),
-        onSuccess: () => queryClient.invalidateQueries(["cart", userId]),
-    });
-}
+// --- Add item ---
+const addToCart = useMutation({
+mutationFn: ({ productId, quantity }) => api.post(basePath, { productId, quantity }),
+onSuccess: (res) => {
+const item = {
+id: res.data.item.productId._id,
+productId: res.data.item.productId,
+quantity: res.data.item.quantity,
+_id: res.data.item._id,
+};
+dispatch(addItem(item));
+toast.success(res.data.message || "Produit ajouté !");
+},
+});
 
-export function useUpdateCartItem(userId) {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: ({ productId, quantity }) =>
-            api.patch(`${API_ENDPOINTS.CART}?userId=${userId}`, { productId, quantity }),
-        onSuccess: () => queryClient.invalidateQueries(["cart", userId]),
-    });
-}
+// --- Update quantity ---
+const updateCartItem = useMutation({
+mutationFn: ({ productId, quantity }) => api.put(basePath, { productId, quantity }),
+onSuccess: (_, variables) => {
+// Merge quantity avec l'item existant sans toucher productId
+const updatedItems = cartRedux.items.map((item) =>
+item.productId._id === variables.productId
+? { ...item, quantity: variables.quantity }
+: item
+);
+dispatch(setCart({ items: updatedItems }));
+toast.success("Quantité mise à jour !");
+},
+});
 
-export function useRemoveCartItem(userId) {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: (productId) =>
-            api.delete(`${API_ENDPOINTS.CART}?userId=${userId}`, { data: { productId } }),
-        onSuccess: () => queryClient.invalidateQueries(["cart", userId]),
-    });
-}
+// --- Remove item ---
+const removeCartItem = useMutation({
+mutationFn: ({ productId }) => api.delete(basePath, { data: { productId } }),
+onSuccess: (_, variables) => {
+const updatedItems = cartRedux.items.filter((item) => item.productId._id !== variables.productId);
+dispatch(setCart({ items: updatedItems }));
+toast.success("Produit supprimé !");
+},
+});
 
-export function useClearCart(userId) {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: () => api.post(`${API_ENDPOINTS.CART}/clear?userId=${userId}`),
-        onSuccess: () => queryClient.invalidateQueries(["cart", userId]),
-    });
-}
+// --- Clear cart ---
+const clearCartMutation = useMutation({
+mutationFn: () => api.delete(`${basePath}/clear`),
+onSuccess: () => {
+dispatch(clearCart());
+toast.success("Panier vidé !");
+},
+});
+
+return {
+cart: cartRedux,
+addToCart,
+updateCartItem,
+removeCartItem,
+clearCart: clearCartMutation,
+};
+};

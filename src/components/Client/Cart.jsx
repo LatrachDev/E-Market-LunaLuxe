@@ -1,5 +1,5 @@
 import { useState } from "react";
-import useCart, { useUpdateCartItem, useRemoveCartItem, useClearCart } from "../../hooks/useCart";
+import  {useCart, } from "../../hooks/useCart";
 import ClientNavBar from "../ClientNavBar";
 import { Trash2, ShoppingCart, Plus, Minus } from "lucide-react";
 
@@ -7,18 +7,14 @@ import { Trash2, ShoppingCart, Plus, Minus } from "lucide-react";
 const userId = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")).id : null;
 
 export default function CartPage() {
-  const { data: cart, isLoading, isError } = useCart(userId);
-  const updateCartItem = useUpdateCartItem(userId);
-  const removeCartItem = useRemoveCartItem(userId);
-  const clearCart = useClearCart(userId);
-
+  const { cart, isLoading, isError , updateCartItem, removeCartItem, clearCart} = useCart(userId);
   const handleQuantityChange = (productId, quantity) => {
     if (quantity < 1) return;
     updateCartItem.mutate({ productId, quantity });
   };
 
   const handleRemove = (productId) => {
-    removeCartItem.mutate(productId);
+    removeCartItem.mutate({productId});
   };
 
   const handleClearCart = () => {
@@ -54,7 +50,7 @@ export default function CartPage() {
       </div>
     );
   }
-
+const items = cart?.items || [];
   const total = cart?.items?.reduce((sum, item) => sum + item.productId.price * item.quantity, 0) || 0;
 
   return (
@@ -104,9 +100,9 @@ export default function CartPage() {
           <div className="grid lg:grid-cols-3 gap-6">
             {/* Liste des articles */}
             <div className="lg:col-span-2 space-y-4">
-              {cart.items.map((item) => (
+              {items.map((item) => (
                 <div
-                  key={item.productId._id}
+                  key={item._id}
                   className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow duration-200"
                 >
                   <div className="flex items-center gap-6">

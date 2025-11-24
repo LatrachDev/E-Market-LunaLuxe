@@ -3,6 +3,8 @@ import { ShoppingCart, Search, Filter, ChevronLeft, ChevronRight } from "lucide-
 import { api } from "../../config/api";
 import API_ENDPOINTS from "../../config/api";
 import { Link } from "react-router-dom";
+import { useCart, } from "../../hooks/useCart";
+
 
 const PLACEHOLDER_IMAGE = "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&h=500&fit=crop";
 const ITEMS_PER_PAGE = 8;
@@ -14,6 +16,7 @@ export default function Products() {
   const [priceFilter, setPriceFilter] = useState("all");
   const [sortBy, setSortBy] = useState("default");
   const [currentPage, setCurrentPage] = useState(1);
+  const { addToCart } = useCart();
 
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/';
 
@@ -80,7 +83,7 @@ export default function Products() {
       filtered.sort((a, b) => {
         const priceA = typeof a.price === 'number' ? a.price : parseFloat(a.price) || 0;
         const priceB = typeof b.price === 'number' ? b.price : parseFloat(b.price) || 0;
-        
+
         switch (sortBy) {
           case "price-low":
             return priceA - priceB;
@@ -115,8 +118,8 @@ export default function Products() {
       <div className="px-4 sm:px-6 lg:px-8 py-16 bg-brandWhite min-h-screen flex items-center justify-center">
         <div className="text-center">
           <p className="font-montserrat text-lg text-red-600 mb-4">{error}</p>
-          <button 
-            onClick={() => window.location.reload()} 
+          <button
+            onClick={() => window.location.reload()}
             className="px-6 py-2 bg-brandRed text-white rounded-md hover:bg-hoverBrandRed transition-colors duration-300 font-montserrat"
           >
             Réessayer
@@ -188,60 +191,63 @@ export default function Products() {
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {paginatedProducts.map((product) => {
-              // Get image URL with priority: primaryImage > image > secondaryImages[0] > placeholder
-              const imagePath = product.primaryImage || 
-                               product.image || 
-                               (product.secondaryImages && product.secondaryImages.length > 0 
-                                 ? product.secondaryImages[0] 
-                                 : null);
-              const imageUrl = imagePath ? buildImageUrl(imagePath) : PLACEHOLDER_IMAGE;
+                // Get image URL with priority: primaryImage > image > secondaryImages[0] > placeholder
+                const imagePath = product.primaryImage ||
+                  product.image ||
+                  (product.secondaryImages && product.secondaryImages.length > 0
+                    ? product.secondaryImages[0]
+                    : null);
+                const imageUrl = imagePath ? buildImageUrl(imagePath) : PLACEHOLDER_IMAGE;
 
-              return (
-                <Link to={`/products/${product._id}`} className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
-                  <div className="relative w-full h-80 overflow-hidden bg-brandSwhite">
-                    <img 
-                      src={imageUrl} 
-                      alt={product.title || 'Product image'}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.target.src = PLACEHOLDER_IMAGE;
-                      }}
-                    />
-                    <div className="absolute top-4 right-4 bg-brandRed text-white px-5 py-1 rounded-md text-sm font-montserrat font-light">
-                      -20%
+                return (
+                  <Link to={`/products/${product._id}`} className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
+                    <div className="relative w-full h-80 overflow-hidden bg-brandSwhite">
+                      <img
+                        src={imageUrl}
+                        alt={product.title || 'Product image'}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.src = PLACEHOLDER_IMAGE;
+                        }}
+                      />
+                      <div className="absolute top-4 right-4 bg-brandRed text-white px-5 py-1 rounded-md text-sm font-montserrat font-light">
+                        -20%
+                      </div>
                     </div>
-                  </div>
-                  
-                  <div className="p-6 flex flex-col justify-between bg-white flex-1">
-                    <div>
-                      <h3 className="font-playfair text-xl font-bold text-l_black mb-2">
-                        {product.title}
-                      </h3>
-                      
-                      <p className="font-montserrat text-sm text-gray-600 mb-4 line-clamp-2">
-                        {product.description}
-                      </p>
+
+                    <div className="p-6 flex flex-col justify-between bg-white flex-1">
+                      <div>
+                        <h3 className="font-playfair text-xl font-bold text-l_black mb-2">
+                          {product.title}
+                        </h3>
+
+                        <p className="font-montserrat text-sm text-gray-600 mb-4 line-clamp-2">
+                          {product.description}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center justify-between mt-auto">
+                        <span className="font-montserrat text-xl font-bold text-brandRed">
+                          {typeof product.price === 'number' ? product.price.toFixed(2) : product.price}$
+                        </span>
+
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            addToCart.mutate({ productId: product._id, quantity: 1 });
+                          }}
+                          className="flex items-center cursor-pointer gap-2 bg-brandRed text-white px-6 py-2 rounded-full hover:bg-hoverBrandRed transition-colors duration-300 font-montserrat font-medium"
+                        >
+                          <ShoppingCart size={18} />
+                          <span>Ajouter</span>
+                        </button>
+                      </div>
                     </div>
-                    
-                    <div className="flex items-center justify-between mt-auto">
-                      <span className="font-montserrat text-xl font-bold text-brandRed">
-                        {typeof product.price === 'number' ? product.price.toFixed(2) : product.price}$
-                      </span>
-                      
-                      <button 
-                        onClick={(e) => e.preventDefault()}
-                        className="flex items-center cursor-pointer gap-2 bg-brandRed text-white px-6 py-2 rounded-full hover:bg-hoverBrandRed transition-colors duration-300 font-montserrat font-medium"
-                      >
-                        <ShoppingCart size={18} />
-                        <span>Ajouter</span>
-                      </button>
-                    </div>
-                  </div>
-                </Link>
-              );
+                  </Link>
+                );
               })}
             </div>
-            
+
             {/* Pagination Controls */}
             {totalPages > 1 && (
               <div className="flex items-center justify-center gap-2 mt-12">
@@ -266,11 +272,10 @@ export default function Products() {
                         <button
                           key={page}
                           onClick={() => setCurrentPage(page)}
-                          className={`px-4 py-2 rounded-lg font-montserrat text-sm transition-colors duration-300 ${
-                            currentPage === page
+                          className={`px-4 py-2 rounded-lg font-montserrat text-sm transition-colors duration-300 ${currentPage === page
                               ? 'bg-brandRed text-white'
                               : 'border border-gray-300 hover:bg-gray-50'
-                          }`}
+                            }`}
                         >
                           {page}
                         </button>
