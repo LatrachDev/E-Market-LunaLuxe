@@ -24,6 +24,7 @@ import MyOrders from "../pages/Client/MyOrders";
 import CreateOrder from "../components/Client/createOrder";
 import DeletedOrdersPage from "../pages/Admin/DeletedOrdersPage";
 import Cart from "../components/Client/Cart";
+import OrderDetails from "../components/Client/OrderDetails";
 
 export default function RoutesList() {
 
@@ -40,7 +41,8 @@ export default function RoutesList() {
                 <Route index element={<ProtectedRoute requiredRole="user"><Layout><ClientDashboard /></Layout></ProtectedRoute>} />
                 <Route path="profile" element={<ProtectedRoute requiredRole="user"><Layout><ProfilePage /></Layout></ProtectedRoute>} />
                 <Route path="myOrders" element={<ProtectedRoute requiredRole="user"><Layout><MyOrders /></Layout></ProtectedRoute>}/>
-                <Route path="createOrder" element={<ProtectedRoute requiredRole={"user"}><Layout><CreateOrder /></Layout></ProtectedRoute>}/>                
+                <Route path="createOrder" element={<ProtectedRoute requiredRole={"user"}><Layout><CreateOrder /></Layout></ProtectedRoute>}/>
+                <Route path="orders/:id" element={<ProtectedRoute requiredRole={"user"}><Layout><OrderDetails /></Layout></ProtectedRoute>} />
             </Route>
 
             {/* Admin Routes */}

@@ -42,7 +42,7 @@ export default function OrdersPage() {
           <table className="min-w-full text-left text-sm font-montserrat">
             <thead className="bg-brandRed text-white uppercase text-xs tracking-wider">
               <tr>
-                <th className="px-6 py-4">Order ID</th>
+                <th className="px-6 py-4">Created at </th>
                 <th className="px-6 py-4">User</th>
                 <th className="px-6 py-4">Email</th>
                 <th className="px-6 py-4">Total (MAD)</th>
@@ -55,10 +55,10 @@ export default function OrdersPage() {
             <tbody>
               {orders.map((order) => (
                 <tr
-                  key={order._id}
+                  key={order.createdAt}
                   className="border-b border-gray-200 hover:bg-[#fbf4fa] transition-all"
                 >
-                  <td className="px-6 py-4 font-semibold text-gray-800">{order._id}</td>
+                  <td className="px-6 py-4 font-semibold text-gray-800">{order.createdAt}</td>
 
                   <td className="px-6 py-4">
                     {order.userId?.fullname || (

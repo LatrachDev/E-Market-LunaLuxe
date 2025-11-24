@@ -1,20 +1,36 @@
 import React, { useState } from "react";
 import useOrders from "../../hooks/UseOrders";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { createOrder } from "../../features/orderSlice";
+
 
 export default function CreateOrder() {
+      const navigate = useNavigate();
+
   const userId = useSelector((state) => state.auth.user?._id);
   const { addOrder, loading ,updateOrderStatus,orders} = useOrders(userId);
   
 
   const [coupon, setCoupon] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    addOrder({
-      coupons: coupon ? [coupon] : [],
-    });
-  };
+ const dispatch = useDispatch();
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const order = await dispatch(
+      createOrder({ coupons: coupon ? [coupon] : [] })
+    ).unwrap();
+
+    console.log("ORDER CREATED:", order);
+    navigate(`/client/orders/${order._id}`, { state: { orders: order } }); 
+  } catch (err) {
+    console.error("ERROR CREATE ORDER", err);
+  }
+};
 
   return (
     <div className="min-h-screen px-6 py-14">
@@ -51,11 +67,7 @@ export default function CreateOrder() {
           </button>
         </form>
       </div>
-        <button onClick={() => updateOrderStatus({id: orders._id,newStatus: "shipped"})}
-                      className="px-5 py-2 rounded-xl bg-brandRed text-white font-semibold hover:bg-hoverBrandRed transition shadow-sm flex justify-center"
-                    >
-                      Checkout
-        </button>
+       
     </div>
   );
 }

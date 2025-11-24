@@ -1,6 +1,6 @@
 
 import { useDispatch, useSelector } from "react-redux";
-import { fetchOrders, createOrder,fetchOrdersDeleted, fetchOrdersAdmin,deletOrder,updateStatusOrder,restoreOrder} from "../features/orderSlice";
+import { fetchOrders, createOrder,fetchOrdersDeleted, fetchOrdersAdmin,deletOrder,updateStatusOrder,restoreOrder,getSellerOrders} from "../features/orderSlice";
 // import { setOrders, setLoading, setError } from "../features/orderSlice";
 
 import { useEffect } from "react";
@@ -48,6 +48,10 @@ const loadOrdersUser = () => {
     dispatch(restoreOrder(orderId));
   };
 
+  const loadSellerOrders = () => {
+    dispatch(getSellerOrders());
+  };
+
   return {
     orders,
     loading,
@@ -58,7 +62,8 @@ const loadOrdersUser = () => {
     loadOrdersUser,
     deleteOrder,
     updateOrderStatus,
-    restorOrder,  
+    restorOrder, 
+    loadSellerOrders, 
   };
 }
 

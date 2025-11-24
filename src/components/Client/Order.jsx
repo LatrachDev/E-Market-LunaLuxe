@@ -29,7 +29,7 @@ export default function OrdersPage() {
           <table className="min-w-full text-left text-sm font-montserrat">
             <thead className="bg-brandRed text-white uppercase text-xs tracking-wider">
               <tr>
-                <th className="px-6 py-4">Order ID</th>
+                <th className="px-6 py-4">Created At </th>
                 <th className="px-6 py-4">Status</th>
                 <th className="px-6 py-4">Total (MAD)</th>
                 <th className="px-6 py-4">Articles</th>
@@ -43,8 +43,8 @@ export default function OrdersPage() {
                   key={order._id}
                   className="border-b border-gray-200 hover:bg-[#fbf4fa] transition-all"
                 >
-                  {/* Order ID */}
-                  <td className="px-6 py-4 font-semibold text-gray-800">{order._id}</td>
+                  {/* Created At */}
+                  <td className="px-6 py-4 font-semibold text-gray-800">{new Date(order.createdAt).toLocaleDateString()}</td>
 
                   {/* Status */}
                   <td className="px-6 py-4">

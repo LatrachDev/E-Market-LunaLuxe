@@ -21,7 +21,6 @@ export default function OrdersDeleted() {
           <table className="min-w-full text-left text-sm font-montserrat">
             <thead className="bg-brandRed text-white uppercase text-xs tracking-wider">
               <tr>
-                <th className="px-6 py-4">Order ID</th>
                 <th className="px-6 py-4">Creation Date</th>
                 <th className="px-6 py-4">Status</th>
                 <th className="px-6 py-4">Total (MAD)</th>
@@ -35,8 +34,7 @@ export default function OrdersDeleted() {
                   key={order._id}
                   className="border-b border-gray-200 hover:bg-[#fbf4fa] transition-all"
                 >
-                  {/* Order ID */}
-                  <td className="px-6 py-4 font-semibold text-gray-800">{order._id}</td>
+                  
 
                   {/* Creation Date */}
                   <td className="px-6 py-4 text-gray-700">
