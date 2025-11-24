@@ -20,7 +20,7 @@ export default function CartPage() {
   const handleClearCart = () => {
     clearCart.mutate();
   };
-
+const PLACEHOLDER_IMAGE = "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&h=500&fit=crop";
   if (isLoading) {
     return (
       <div>
@@ -111,12 +111,12 @@ const items = cart?.items || [];
                     <img 
                         src={item.productId.primaryImage 
                         ? `${import.meta.env.VITE_BASE_URL}${item.productId.primaryImage}` 
-                        : "/placeholder.png"
+                        :PLACEHOLDER_IMAGE
                         } 
                         alt={item.productId.title}
                         className="w-full h-full object-cover"
                         onError={(e) => {
-                        e.target.src = "/placeholder.png";
+                        e.target.src = "/PLACEHOLDER_IMAGE";
                         }}
                     />
                     </div>
