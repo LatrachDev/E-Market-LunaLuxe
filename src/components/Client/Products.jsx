@@ -5,7 +5,6 @@ import API_ENDPOINTS from "../../config/api";
 import { Link } from "react-router-dom";
 import { useCart, } from "../../hooks/useCart";
 
-
 const PLACEHOLDER_IMAGE = "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&h=500&fit=crop";
 const ITEMS_PER_PAGE = 8;
 
@@ -16,7 +15,8 @@ export default function Products() {
   const [priceFilter, setPriceFilter] = useState("all");
   const [sortBy, setSortBy] = useState("default");
   const [currentPage, setCurrentPage] = useState(1);
-  const { addToCart } = useCart();
+  const user = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")).id : null;
+  const { addToCart } = useCart(user.id);
 
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/';
 
@@ -273,8 +273,8 @@ export default function Products() {
                           key={page}
                           onClick={() => setCurrentPage(page)}
                           className={`px-4 py-2 rounded-lg font-montserrat text-sm transition-colors duration-300 ${currentPage === page
-                              ? 'bg-brandRed text-white'
-                              : 'border border-gray-300 hover:bg-gray-50'
+                            ? 'bg-brandRed text-white'
+                            : 'border border-gray-300 hover:bg-gray-50'
                             }`}
                         >
                           {page}
