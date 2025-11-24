@@ -40,6 +40,7 @@ const item = state.items.find(i => i.id === id);
 if (item) {
 state.total -= item.productId.price * item.quantity;
 item.quantity = quantity;
+console.log("quantité",item.quantity);
 state.total += item.productId.price * quantity;
 }
 },

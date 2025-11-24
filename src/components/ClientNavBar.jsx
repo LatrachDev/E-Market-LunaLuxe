@@ -1,12 +1,14 @@
 import { Link } from "react-router-dom";
 import { Package, ShoppingCart, User, LogOut } from "lucide-react";
 import { use, useEffect, useRef, useState } from "react";
+import { useCart } from "../hooks/useCart";
 
 function ClientNavBar() {
 
   const [open, setOpen] = useState(false);
   const modalRef = useRef(null);
-
+  const userId = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")).id : null;
+  const { cart } = useCart(userId);
   useEffect(() => {
     function handleClickOutside(event) {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
@@ -62,7 +64,7 @@ function ClientNavBar() {
           <ShoppingCart size={24} className="w-5 h-5 text-gray-800 hover:text-brandBrown transition-colors" />
         
           <span className="absolute top-0 -right-3 bg-brandRed text-brandWhite text-xs rounded-full w-5 h-5 flex items-center font-montserrat justify-center">
-            0
+            {cart?.items?.length}
           </span>
         </Link>
 
