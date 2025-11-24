@@ -15,7 +15,7 @@ export default function ProfilePage() {
         setLoading(true);
         setError(null);
         const response = await api.get(API_ENDPOINTS.PROFILE.MYPROFILE);
-
+console.log('response fetchprofile:', response);
         const userData = response.data?.user;
         setUser(userData);
       } catch (error) {
