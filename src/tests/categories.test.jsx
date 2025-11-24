@@ -1,4 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+/* eslint-env jest */
+import { describe, it, expect, beforeEach } from '@jest/globals';
+import { jest } from '@jest/globals';
 import {
     fetchCategories,
     fetchCategoryById,
@@ -8,25 +10,30 @@ import {
 } from '../services/categoryService';
 import { api } from '../config/api';
 
-// Mock the api module
-vi.mock('../config/api', async (importOriginal) => {
-    const actual = await importOriginal();
-    const mockApi = {
-        get: vi.fn(),
-        post: vi.fn(),
-        patch: vi.fn(),
-        delete: vi.fn(),
-    };
-    return {
-        ...actual,
-        api: mockApi,
-    };
-});
+// Mock the api module with inline jest.fn instances (avoid hoisting issues)
+jest.mock('../config/api', () => ({
+    __esModule: true,
+    default: {
+        CATEGORIES: {
+            GET_ALL: '/categories',
+            GET_ONE: '/categories/:id',
+            CREATE_CATEGORY: '/categories',
+            UPDATE_CATEGORY: '/categories/:id',
+            DELETE_CATEGORY: '/categories/:id',
+        }
+    },
+    api: {
+        get: jest.fn(),
+        post: jest.fn(),
+        patch: jest.fn(),
+        delete: jest.fn(),
+    }
+}));
 
 describe('Category Service', () => {
     beforeEach(() => {
-        vi.clearAllMocks();
-        vi.spyOn(console, 'error').mockImplementation(() => {});
+        jest.clearAllMocks();
+        jest.spyOn(console, 'error').mockImplementation(() => {});
     });
 
     describe('fetchCategories', () => {
