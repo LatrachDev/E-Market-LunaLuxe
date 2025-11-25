@@ -16,7 +16,7 @@ export const useCart = (userId) => {
     // Fetch panier complet
     const fetchCart = async () => {
         const res = await api.get(basePath, { headers: { "Cache-Control": "no-cache" } });
-        return res.data.data; // retourne le panier complet
+        return res.data.data;
     };
 
     useEffect(() => {
@@ -30,46 +30,36 @@ export const useCart = (userId) => {
         }
     }, [userId]);
 
-    const invalidateCart = () => queryClient.invalidateQueries(queryKey);
-
     // --- Add item ---
-   const addToCart = useMutation({
-    mutationFn: ({ productId, quantity }) =>
-        api.post(basePath, { productId, quantity }),
+    const addToCart = useMutation({
+        mutationFn: ({ productId, quantity }) =>
+            api.post(basePath, { productId, quantity }),
 
-    onSuccess: (res, variables) => {
-        const cart = res.data.data;
+        onSuccess: async (res) => {
+            console.log('Add to cart response:', res.data);
+            
+            // Re-fetch le panier complet pour synchroniser Redux
+            try {
+                const updatedCart = await fetchCart();
+                dispatch(setCart(updatedCart));
+                toast.success("Produit ajouté au panier !");
+            } catch (error) {
+                console.error('Error refreshing cart:', error);
+            }
+        },
 
-        // Trouver l'item ajouté ou mis à jour
-        const newItem = cart.items.find(
-            (item) => item.productId === variables.productId
-        );
-
-        if (!newItem) {
-            toast.error("Erreur lors de l'ajout du produit");
-            return;
+        onError: (error) => {
+            console.error('Add to cart error:', error);
+            toast.error("Impossible d'ajouter au panier");
         }
-
-        dispatch(addItem(newItem));
-        toast.success(res.data.message || "Produit ajouté !");
-    },
-
-    onError: () => {
-        toast.error("Impossible d'ajouter au panier");
-    }
-});
+    });
 
     // --- Update quantity ---
     const updateCartItem = useMutation({
         mutationFn: ({ productId, quantity }) => api.put(basePath, { productId, quantity }),
-        onSuccess: (_, variables) => {
-            // Merge quantity avec l'item existant sans toucher productId
-            const updatedItems = cartRedux.items.map((item) =>
-                item.productId._id === variables.productId
-                    ? { ...item, quantity: variables.quantity }
-                    : item
-            );
-            dispatch(setCart({ items: updatedItems }));
+        onSuccess: async () => {
+            const updatedCart = await fetchCart();
+            dispatch(setCart(updatedCart));
             toast.success("Quantité mise à jour !");
         },
     });
@@ -77,9 +67,9 @@ export const useCart = (userId) => {
     // --- Remove item ---
     const removeCartItem = useMutation({
         mutationFn: ({ productId }) => api.delete(basePath, { data: { productId } }),
-        onSuccess: (_, variables) => {
-            const updatedItems = cartRedux.items.filter((item) => item.productId._id !== variables.productId);
-            dispatch(setCart({ items: updatedItems }));
+        onSuccess: async () => {
+            const updatedCart = await fetchCart();
+            dispatch(setCart(updatedCart));
             toast.success("Produit supprimé !");
         },
     });

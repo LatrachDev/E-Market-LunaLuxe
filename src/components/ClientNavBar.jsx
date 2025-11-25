@@ -1,40 +1,46 @@
 import { Link } from "react-router-dom";
 import { Package, ShoppingCart, User, LogOut } from "lucide-react";
-import { use, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCart } from "../hooks/useCart";
-import { useSelector } from "react-redux";
-function ClientNavBar() {
+import { useSelector } from "react-redux"; // Ajouter ceci
 
+function ClientNavBar() {
   const [open, setOpen] = useState(false);
   const modalRef = useRef(null);
-  const userId = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")).id : null;
-  // const { cart } = useCart(userId);  const cart = useSelector((state) => state.cart);
-  const cartItemsCount = cart?.items?.length || 0;
   
+  // Récupérer le user depuis localStorage
+  const user = localStorage.getItem("user") 
+    ? JSON.parse(localStorage.getItem("user")) 
+    : null;
+
+  // Récupérer le panier depuis Redux (pas depuis le hook useCart)
+  const cart = useSelector((state) => state.cart);
+  const cartItemsCount = cart?.items?.length || 0;
+
+  const handleOpen = () => setOpen(!open);
+  const handleClose = () => setOpen(false);
+
+  const handlLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.location.href = "/login";
+  };
+
   useEffect(() => {
-    function handleClickOutside(event) {
+    const handleClickOutside = (event) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
         setOpen(false);
       }
+    };
+
+    if (open) {
+      document.addEventListener("mousedown", handleClickOutside);
     }
-    document.addEventListener("mousedown", handleClickOutside);
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
-    }
+    };
   }, [open]);
-
-  const handleOpen = () => {
-    setOpen(true);
-  }
-
-  const handleClose = () => {
-    setOpen(false);
-  }
-
-  const handlLogout = () => {
-    localStorage.removeItem('token');
-    window.location.href = '/login';
-  }
 
   return (
     <header className="fixed top-0 left-0 w-full flex items-center justify-between px-6 sm:px-12 py-4 bg-white shadow-sm z-50">
@@ -57,7 +63,7 @@ function ClientNavBar() {
           <p className="text-sm font-montserrat ml-2">Products</p>
         </Link>
 
-        {/* Cart Icon */}
+        {/* Cart Icon avec compteur mis à jour */}
         <Link
           to="/cart"
           className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-300 relative"
@@ -65,9 +71,12 @@ function ClientNavBar() {
         >
           <ShoppingCart size={24} className="w-5 h-5 text-gray-800 hover:text-brandBrown transition-colors" />
         
-          <span className="absolute top-0 -right-3 bg-brandRed text-brandWhite text-xs rounded-full w-5 h-5 flex items-center font-montserrat justify-center">
-            {cart?.items?.length}
-          </span>
+          {/* Badge du compteur */}
+          {cartItemsCount > 0 && (
+            <span className="absolute top-0 -right-3 bg-brandRed text-brandWhite text-xs rounded-full w-5 h-5 flex items-center font-montserrat justify-center">
+              {cartItemsCount}
+            </span>
+          )}
         </Link>
 
         {/* Profile Icon */}
@@ -79,6 +88,7 @@ function ClientNavBar() {
           <User size={24} className="w-5 h-5 text-gray-800 hover:text-brandBrown transition-colors" />
         </button>
 
+        {/* Dropdown Menu */}
         {open && (
           <div ref={modalRef} className="absolute top-12 right-6 bg-white shadow-md rounded-md p-4 z-50">
               <Link
