@@ -16,8 +16,9 @@ export default function CartPage() {
 
 
   const { cart, isLoading, isError , updateCartItem, removeCartItem, clearCart} = useCart(userId);
-  const handleQuantityChange = (productId, quantity) => {
+  const handleQuantityChange = (productId, quantity, stock) => {
     if (quantity < 1) return;
+    if (quantity >stock) return;
     updateCartItem.mutate({ productId, quantity });
   };
 
@@ -71,7 +72,7 @@ const items = cart?.items || [];
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="bg-blue-100 p-3 rounded-xl">
-                <ShoppingCart className="w-8 h-8 text-blue-600" />
+                <ShoppingCart className="w-8 h-8 text-brandRed" />
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-gray-800">Mon panier</h1>
@@ -134,7 +135,7 @@ const items = cart?.items || [];
                       <h3 className="text-lg font-semibold text-gray-800 truncate">
                         {item.productId.title}
                       </h3>
-                      <p className="text-xl font-bold text-blue-600 mt-1">
+                      <p className="text-xl font-bold text-brandRed mt-1">
                         {item.productId.price} €
                       </p>
                     </div>
@@ -142,7 +143,11 @@ const items = cart?.items || [];
                     {/* Contrôles quantité */}
                     <div className="flex items-center gap-3">
                       <button
-                        onClick={() => handleQuantityChange(item.productId._id, item.quantity - 1)}
+                        onClick={() =>   handleQuantityChange(
+                        item.productId._id,
+                        item.quantity - 1,
+                        item.productId.quantity
+                      )}
                         disabled={item.quantity <= 1}
                         className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transition-colors duration-200"
                       >
@@ -153,12 +158,24 @@ const items = cart?.items || [];
                         type="number"
                         value={item.quantity}
                         min="1"
-                        onChange={(e) => handleQuantityChange(item.productId._id, parseInt(e.target.value) || 1)}
+                        max={item.productId.quantity}
+                        onChange={(e) => handleQuantityChange(
+                          item.productId._id,
+                          Math.min(parseInt(e.target.value) || 1, item.productId.quantity),
+                          item.productId.quantity
+                        )}
                         className="w-16 h-10 text-center border-2 border-gray-200 rounded-lg font-semibold focus:border-blue-500 focus:outline-none"
                       />
                       
                       <button
-                        onClick={() => handleQuantityChange(item.productId._id, item.quantity + 1)}
+                         onClick={() =>
+                          handleQuantityChange(
+                            item.productId._id,
+                            item.quantity + 1,
+                            item.productId.quantity
+                          )
+                        }
+                        disabled={item.quantity >= item.productId.quantity}
                         className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors duration-200"
                       >
                         <Plus className="w-4 h-4 text-gray-600" />
@@ -203,7 +220,7 @@ const items = cart?.items || [];
                   <div className="border-t pt-3 mt-3">
                     <div className="flex justify-between text-lg font-bold text-gray-800">
                       <span>Total</span>
-                      <span className="text-2xl text-blue-600">{total.toFixed(2)} €</span>
+                      <span className="text-2xl text-brandRed">{total.toFixed(2)} €</span>
                     </div>
                   </div>
                 </div>
@@ -217,11 +234,11 @@ const items = cart?.items || [];
 
                 {/* ikram */}
                 <button
-  onClick={() => setShowOrderModal(true)}
-  className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
->
-  Valider ma commande
-</button>
+                onClick={() => setShowOrderModal(true)}
+                className="w-full py-4 bg-brandRed  text-white rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              >
+                Valider ma commande
+              </button>
 
 
                 <div className="mt-4 p-4 bg-green-50 rounded-lg">

@@ -5,6 +5,9 @@ import API_ENDPOINTS, { api } from "../../config/api";
 import { useCart, } from "../../hooks/useCart";
 import Layout from "../../components/Layout";
 
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const PLACEHOLDER_IMAGE = "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&h=500&fit=crop";
 
 export default function ProductDetails() {
@@ -299,6 +302,19 @@ export default function ProductDetails() {
             </div>
           </div>
         </div>
+         <ToastContainer 
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        style={{ zIndex: 9999 }}
+      />
       </div>
     </Layout>
   );
