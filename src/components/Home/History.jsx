@@ -1,5 +1,5 @@
 import React from 'react';
-import HistoryImage from "../../assets/Images/History.png";
+import HistoryImage from "../../assets/Images/history.png";
 
 export default function History() {
   return (
