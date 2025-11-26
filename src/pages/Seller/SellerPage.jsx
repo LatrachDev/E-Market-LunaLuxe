@@ -37,7 +37,7 @@ function SellerPage() {
   const renderSection = () => {
     switch (activeSection) {
       case 'my-products':
-        return <MyProducts sellerId={sellerId} />;
+        return <MyProducts />;
 
       case 'orders':
         return <Orders />;
