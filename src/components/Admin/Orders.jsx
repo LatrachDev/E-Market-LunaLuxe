@@ -3,13 +3,7 @@ import useOrders from "../../Hooks/UseOrders";
 import { X } from "lucide-react";
 
 export default function OrdersPage() {
-  const {
-    orders,
-    loading,
-    error,
-    loadOrdersAdmin,
-    deleteOrder,
-  } = useOrders();
+  const { orders, loading, error, loadOrdersAdmin, deleteOrder } = useOrders();
 
   const [selectedOrder, setSelectedOrder] = useState(null);
 
