@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Edit, Trash2, Plus, X } from 'lucide-react';
-import API_ENDPOINTS, { api } from '../../config/api';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  fetchSellerProductsAsync,
+  createProductAsync,
+  updateProductAsync,
+  deleteProductAsync,
+} from '../../features/productSlice';
+import { fetchCategoriesAsync } from '../../features/categorySlice';
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/';
 const PLACEHOLDER_IMAGE = "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&h=500&fit=crop";
@@ -11,8 +18,10 @@ const getImageUrl = (image) => {
 };
 
 export default function MyProducts() {
-  const [myProducts, setMyProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const dispatch = useDispatch();
+  const { sellerProducts, status, error: productsError } = useSelector((state) => state.products);
+  const { items: categories } = useSelector((state) => state.categories);
+  
   const [sellerId, setSellerId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
@@ -26,12 +35,13 @@ export default function MyProducts() {
   });
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
-  const [isSaving, setIsSaving] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState('');
   const [primaryImage, setPrimaryImage] = useState(null);
   const [secondaryImages, setSecondaryImages] = useState([]);
   const [imagePreview, setImagePreview] = useState('');
+
+  const isSaving = status === 'loading';
+  const isDeleting = status === 'loading';
 
   // Fetch seller ID and products
   useEffect(() => {
@@ -45,34 +55,16 @@ export default function MyProducts() {
       if (!id) return;
       setSellerId(id);
 
-      fetchProducts(id);
+      dispatch(fetchSellerProductsAsync(id));
     } catch (error) {
       console.error('Error parsing user data:', error);
     }
-  }, []);
+  }, [dispatch]);
 
   // Fetch categories
   useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  const fetchProducts = async (id) => {
-    try {
-      const response = await api.get(API_ENDPOINTS.SELLER.MY_PRODUCTS(id));
-      setMyProducts(response?.data?.products || []);
-    } catch (error) {
-      console.error('Error fetching products:', error);
-    }
-  };
-
-  const fetchCategories = async () => {
-    try {
-      const response = await api.get(API_ENDPOINTS.CATEGORIES.GET_ALL);
-      setCategories(response?.data?.categories || []);
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-    }
-  };
+    dispatch(fetchCategoriesAsync());
+  }, [dispatch]);
 
   const resetForm = () => {
     setFormData({
@@ -182,42 +174,22 @@ export default function MyProducts() {
     });
 
     try {
-      setIsSaving(true);
-      
       if (editingProduct) {
         // Update existing product
-        const endpoint = API_ENDPOINTS.SELLER.UPDATE_PRODUCT(editingProduct._id)
-          
-        const response = await api.put(
-          endpoint,
-          payload,
-          { headers: { 'Content-Type': 'multipart/form-data' } }
-        );
-        
-        const updatedProduct = response?.data?.data || response?.data?.product;
-        setMyProducts(prev => prev.map(p => 
-          p._id === editingProduct._id ? updatedProduct : p
-        ));
+        await dispatch(updateProductAsync({ id: editingProduct._id, productData: payload })).unwrap();
+        // Refresh seller products after update
+        dispatch(fetchSellerProductsAsync(sellerId));
       } else {
         // Create new product
-        const endpoint = API_ENDPOINTS.SELLER.CREATE_PRODUCT;
-          
-        const response = await api.post(
-          endpoint,
-          payload,
-          { headers: { 'Content-Type': 'multipart/form-data' } }
-        );
-        
-        const newProduct = response?.data?.data || response?.data?.product;
-        setMyProducts(prev => [...prev, newProduct]);
+        await dispatch(createProductAsync(payload)).unwrap();
+        // Refresh seller products after creation
+        dispatch(fetchSellerProductsAsync(sellerId));
       }
       
       handleCloseModal();
     } catch (error) {
       console.error('Failed to save product:', error);
-      setError(error.response?.data?.message || 'Failed to save product. Please try again.');
-    } finally {
-      setIsSaving(false);
+      setError(error?.message || error?.response?.data?.message || 'Failed to save product. Please try again.');
     }
   };
 
@@ -230,19 +202,19 @@ export default function MyProducts() {
   const handleConfirmDelete = async () => {
     if (!productToDelete?._id || isDeleting) return;
     
-    setIsDeleting(true);
     setError('');
     
     try {
-      await api.delete(API_ENDPOINTS.SELLER.DELETE_PRODUCT(productToDelete._id));
-      setMyProducts(prev => prev.filter(p => p._id !== productToDelete._id));
+      await dispatch(deleteProductAsync(productToDelete._id)).unwrap();
+      // Refresh seller products after deletion
+      if (sellerId) {
+        dispatch(fetchSellerProductsAsync(sellerId));
+      }
       setIsDeleteModalOpen(false);
       setProductToDelete(null);
     } catch (error) {
       console.error('Failed to delete product:', error);
-      setError(error.response?.data?.message || 'Failed to delete product. Please try again.');
-    } finally {
-      setIsDeleting(false);
+      setError(error?.message || error?.response?.data?.message || 'Failed to delete product. Please try again.');
     }
   };
 
@@ -267,7 +239,13 @@ export default function MyProducts() {
         </button>
       </div>
 
-      {myProducts.length === 0 ? (
+      {productsError && (
+        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-sm text-red-600 font-montserrat">{productsError}</p>
+        </div>
+      )}
+
+      {sellerProducts.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-center text-gray-500 font-montserrat border border-dashed border-brandRed/20 rounded-2xl">
           <p className="text-lg font-semibold text-gray-700 mb-2">No products yet</p>
           <p className="text-sm max-w-md">
@@ -287,7 +265,7 @@ export default function MyProducts() {
               </tr>
             </thead>
             <tbody>
-              {myProducts.map((product) => (
+              {sellerProducts.map((product) => (
                 <tr key={product._id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                   <td className="px-4 py-4">
                     <div className="flex items-center gap-3">

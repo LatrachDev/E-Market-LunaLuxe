@@ -67,6 +67,7 @@ const mockProduct = {
   price: 29.99,
   primaryImage: '/images/test.jpg',
   description: 'Test product description',
+  quantity: 10, // Stock quantity
 };
 
 const mockCartItem = {
@@ -358,6 +359,7 @@ describe('Cart - Integration Tests (CartPage Component)', () => {
     const item1 = { ...mockCartItem, quantity: 2 };
     const item2 = {
       ...mockCartItem,
+      _id: 'cartItem2',
       id: 'product2',
       productId: { ...mockProduct, _id: 'product2', price: 19.99 },
       quantity: 3,
