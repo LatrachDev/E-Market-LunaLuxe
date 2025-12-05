@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback, memo } from "react";
 import { useUsers, useCreateUser, useUpdateUser, useDeleteUser } from "../../hooks/useUsers";
 import UserForm from "./UserForm";
 import UserTable from "./UserTable";
@@ -15,31 +15,34 @@ export default function AdminUsers() {
   const [editingUser, setEditingUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
-  const handleSubmit = async (data) => {
-    if (editingUser) {
-      await updateUser.mutateAsync({ id: editingUser.id, data });
-      setEditingUser(null);
-    } else {
-      await createUser.mutateAsync(data);
-    }
-    setShowModal(false);
-  };
-
-  const handleUpdateRole = ({ id, role }) => {
+  const handleUpdateRole = useCallback((id, role) => {
     updateUser.mutate({ id, data: { role } });
-  };
-  
-  const handleDelete = (id) => deleteUser.mutate(id);
+  }, [updateUser]);
 
-  const openCreateModal = () => {
+  const handleDelete = useCallback((id) => {
+    if (window.confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) {
+      deleteUser.mutate(id);
+    }
+  }, [deleteUser]);
+
+  const openCreateModal = useCallback(() => {
     setEditingUser(null);
     setShowModal(true);
-  };
+  }, []);
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     setShowModal(false);
     setEditingUser(null);
-  };
+  }, []);
+
+  const handleSubmit = useCallback(async (data) => {
+    if (editingUser) {
+      await handleUpdateRole(editingUser._id, data.role);
+    } else {
+      createUser.mutate(data);
+    }
+    closeModal();
+  }, [editingUser, handleUpdateRole, createUser, closeModal]);
 
   if (isLoading) {
     return (

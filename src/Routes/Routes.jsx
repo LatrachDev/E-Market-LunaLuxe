@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, memo } from "react";
 import Layout from "../components/Layout";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -9,6 +9,7 @@ const ProductDetails = lazy(() => import("../pages/Products/ProductDetails"));
 const LoginPage = lazy(() => import("../pages/Auth/LoginPage"));
 const SignupPage = lazy(() => import("../pages/Auth/SignupPage"));
 const ClientDashboard = lazy(() => import("../pages/Client/ClientDashboard"));
+import SellerPage from "../pages/Seller/SellerPage";
 const AdminDashboard = lazy(() => import("../pages/Admin/AdminDashboard"));
 const NotFound = lazy(() => import("../pages/Error/NotFound"));
 const ProfilePage = lazy(() => import("../pages/Client/ProfilePage"));
@@ -30,14 +31,14 @@ const Cart = lazy(() => import("../components/Client/Cart"));
 const OrderDetails = lazy(() => import("../components/Client/OrderDetails"));
 
 // Loading fallback component
-const LoadingFallback = () => (
+const LoadingFallback = memo(() => (
   <div className="min-h-screen flex items-center justify-center bg-white">
     <div className="text-center">
       <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-brandRed border-r-transparent"></div>
       <p className="mt-4 text-lg font-montserrat text-gray-600">Loading...</p>
     </div>
   </div>
-);
+));
 
 export default function RoutesList() {
   return (
@@ -73,7 +74,7 @@ export default function RoutesList() {
         </Route>
 
         {/* Seller Routes */}
-        {/* <Route path="/seller/:sellerId?" element={<ProtectedRoute requiredRole="seller"><SellerPage /></ProtectedRoute>} /> */}
+        <Route path="/seller/:sellerId?" element={<ProtectedRoute requiredRole="seller"><SellerPage /></ProtectedRoute>} />
         
         {/* Error Routes */}
         <Route path={'*'} element={<NotFound />} />

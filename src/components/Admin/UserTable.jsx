@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import { Edit2, Trash2, Save, X } from "lucide-react";
 import { useEffect } from "react";
 import { api } from "../../config/api";
 
-export default function UserTable({ users, onUpdate, onDelete, page, setPage, totalPages }) {
+const UserTable = memo(({ users, onUpdate, onDelete, page, setPage, totalPages }) => {
   const [editingId, setEditingId] = useState(null);
   const [selectedRole, setSelectedRole] = useState("");
   const [roles, setRoles] = useState([]);
@@ -186,4 +186,6 @@ export default function UserTable({ users, onUpdate, onDelete, page, setPage, to
       </div>
     </div>
   );
-}
+});
+
+export default UserTable;

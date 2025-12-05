@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { ShoppingCart, Search, Filter, ChevronLeft, ChevronRight } from "lucide-react";
 import { api } from "../../config/api";
 import API_ENDPOINTS from "../../config/api";
@@ -14,7 +14,8 @@ export default function Products() {
   const [searchQuery, setSearchQuery] = useState("");
   const [priceFilter, setPriceFilter] = useState("all");
   const [sortBy, setSortBy] = useState("default");
-  const [currentPage, setCurrentPage] = useState(1);
+  const setCurrentPage = useState(1)[1]; // Déjà stable grâce à useState
+  const [currentPage, setCurrentPageState] = useState(1);
   const user = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")).id : null;
   const { addToCart } = useCart(user.id);
 
@@ -112,6 +113,15 @@ export default function Products() {
   useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery, priceFilter, sortBy]);
+
+  // Mais ces handlers devraient être mémoïsés :
+  const handlePreviousPage = useCallback(() => {
+    setCurrentPage(prev => Math.max(1, prev - 1));
+  }, []);
+
+  const handleNextPage = useCallback(() => {
+    setCurrentPage(prev => Math.min(totalPages, prev + 1));
+  }, [totalPages]);
 
   if (error) {
     return (
@@ -252,7 +262,7 @@ export default function Products() {
             {totalPages > 1 && (
               <div className="flex items-center justify-center gap-2 mt-12">
                 <button
-                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  onClick={handlePreviousPage}
                   disabled={currentPage === 1}
                   className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-300 font-montserrat text-sm"
                 >
@@ -291,7 +301,7 @@ export default function Products() {
                 </div>
 
                 <button
-                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  onClick={handleNextPage}
                   disabled={currentPage === totalPages}
                   className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-300 font-montserrat text-sm"
                 >

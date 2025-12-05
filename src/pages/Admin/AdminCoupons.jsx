@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Plus, Edit, Trash2, X } from 'lucide-react';
 import { useCoupons, useCreateCoupon, useUpdateCoupon, useDeleteCoupon } from '../../Hooks/useCoupons';
 import { ToastContainer, toast } from 'react-toastify';
@@ -62,6 +62,10 @@ export default function AdminCoupons() {
         setIsModalOpen(false);
         setEditingCoupon(null);
     };
+
+    const handleInputChange = useCallback((field, value) => {
+        setFormData(prev => ({ ...prev, [field]: value }));
+    }, []);
 
     const submit = (e) => {
         e.preventDefault();

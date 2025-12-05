@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { Link } from 'react-router-dom';
 
-function RoutineCard({ src, alt }) {
+const RoutineCard = memo(({ src, alt }) => {
   const [isActive, setIsActive] = useState(false);
   
   return (
@@ -16,7 +16,7 @@ function RoutineCard({ src, alt }) {
       />
     </div>
   );
-}
+});
 
 export default function Routine() {
   const routineImages = [
