@@ -59,6 +59,8 @@ export default function RoutesList() {
                 <Route path="coupons" element={<AdminCoupons />} />
                 <Route path="orders" element={<OrdersPage />} />
                 <Route path="orders/deleted" element={<DeletedOrdersPage />} />
+                             <Route path="/logs" element={<LogsPage />} />
+
                 {/* <Route path="ordersTest" element={<OrdersTest />} /> */}
             </Route>
 
